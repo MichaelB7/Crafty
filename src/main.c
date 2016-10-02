@@ -19,7 +19,7 @@
  *  the people involved in the continuing development of this program, there   *
  *  are no particular members responsible for any specific aspect of Crafty,   *
  *  although R. Hyatt wrote 99%+ of the existing code, excepting the Magic .   *
- *  move stuff by Pradu Kaanan, syzygy code written by Ronal de Mann, and the  *
+ *  move stuff by Pradu Kaanan, syzygy code written by Ronald de Man, and the  *
  *  epd stuff written by S. Edwards.                                           *
  *                                                                             *
  *     Robert Hyatt, Pelham, AL.                                               *
