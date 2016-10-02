@@ -1,6 +1,6 @@
 #include "chess.h"
 #include "data.h"
-/* last modified 02/26/14 */
+/* last modified 09/29/16 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -13,7 +13,7 @@
  */
 int Bench(int increase, int autotune) {
   uint64_t nodes = 0;
-  int old_do, old_st, old_sd, total_time_used, pos, old_mt;
+  int old_do, old_st, old_sd, total_time_used, pos, old_mt = smp_max_threads;
   FILE *old_books, *old_book;
   TREE *const tree = block[0];
   char fen[64][80] = {
@@ -167,28 +167,29 @@ int Bench(int increase, int autotune) {
   *                                                          *
   ************************************************************
   */
-  Print(4095, "Running SMP benchmark (2 threads)...\n");
-  old_mt = smp_max_threads;
-  smp_max_threads = 2;
-  fflush(stdout);
-  Print(4095, "pos: ");
-  for (pos = 0; pos < 2 && old_mt == 0; pos++) {
-    strcpy(buffer, fen[pos]);
-    nargs = ReadParse(buffer, args, " \t;=");
-    SetBoard(tree, nargs, args, 0);
-    search_depth = fen_depth + increase;
-    last_pv.pathd = 0;
-    thinking = 1;
-    tree->status[1] = tree->status[0];
-    InitializeHashTables(0);
-    Iterate(game_wtm, think, 0);
-    thinking = 0;
-    nodes += tree->nodes_searched;
-    total_time_used += (program_end_time - program_start_time);
-    nodes_per_second =
-        (uint64_t) tree->nodes_searched * 100 /
-        Max((uint64_t) program_end_time - program_start_time, 1);
-    Print(4095, "%2d(%s) ", pos + 1, DisplayKMB(nodes_per_second, 0));
+  if (smp_max_threads == 0) {
+    smp_max_threads = 2;
+    Print(4095, "Running SMP benchmark (%d threads)...\n", smp_max_threads);
+    fflush(stdout);
+    Print(4095, "pos: ");
+    for (pos = 0; pos < 2 && old_mt == 0; pos++) {
+      strcpy(buffer, fen[pos]);
+      nargs = ReadParse(buffer, args, " \t;=");
+      SetBoard(tree, nargs, args, 0);
+      search_depth = fen_depth + increase;
+      last_pv.pathd = 0;
+      thinking = 1;
+      tree->status[1] = tree->status[0];
+      InitializeHashTables(0);
+      Iterate(game_wtm, think, 0);
+      thinking = 0;
+      nodes += tree->nodes_searched;
+      total_time_used += (program_end_time - program_start_time);
+      nodes_per_second =
+          (uint64_t) tree->nodes_searched * 100 /
+          Max((uint64_t) program_end_time - program_start_time, 1);
+      Print(4095, "%2d(%s) ", pos + 1, DisplayKMB(nodes_per_second, 0));
+    }
   }
  /*
   ************************************************************
@@ -199,7 +200,7 @@ int Bench(int increase, int autotune) {
   */
   if (!autotune)
     printf("\n");
-  if (!autotune) {
+  if (!autotune && old_mt == 0) {
     Print(4095, "\nTotal nodes: %" PRIu64 "\n", nodes);
     Print(4095, "Raw nodes per second: %d\n",
         (int) ((double) nodes / ((double) total_time_used / (double) 100.0)));
@@ -211,7 +212,7 @@ int Bench(int increase, int autotune) {
   display_options = old_do;
   search_time_limit = old_st;
   search_depth = old_sd;
-  smp_max_threads = Max(1, old_mt);
+  smp_max_threads = Max(0, old_mt);
   books_file = old_books;
   book_file = old_book;
   NewGame(0);
