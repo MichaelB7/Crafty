@@ -4,10 +4,12 @@ Crafty is the "son" (direct descendent) of the chess program Cray Blitz.  it is 
 ********************************************************************************
  *  Crafty, copyright 1996-2016 by Robert M. Hyatt, Ph.D. 
  *  Crafty is a team project consisting of the following members:
+       
        Robert Hyatt, Pelham, AL.              
        Mike Byrne, Pen Argyl, PA.                                              
        Tracy Riegle, Hershey, PA.                                              
-       Peter Skinner, Edmonton, AB  Canada.      
+       Peter Skinner, Edmonton, AB  Canada.     
+       
  These are the people involved in the continuing development of this program, there are no particular members responsible for any specific aspect of Crafty, although R. Hyatt wrote 99%+ of the existing code, excepting the Magic move stuff by Pradu Kaanan, syzygy code written by Ronal de Mann, and the epd stuff written by S. Edwards.                                *                                                                             
  All rights reserved.  No part of this program may be reproduced in any form or by any means, for other than your personal use, without the express written permission of the authors.  This program may not be used in whole, nor in part, to enter any computer chess competition without written permission from the authors.  Such permission will include the requirement that the program be entered under the name "Crafty" so that the program's ancestry will be known.                       
  *    
