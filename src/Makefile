@@ -51,13 +51,20 @@
 #                  can be dumped while running.
 #   -DUNIX         This identifies the target O/S as being Unix-based, if this
 #                  option is omitted, windows is assumed.
-
-#	$(MAKE) -j unix-gcc
+#
+#    Note:         If you compile on a machine with the hardware popcnt
+#                  instruction, you should use the -mpopcnt compiler option
+#                  to make the built-in intrinsic use the hardware rather than
+#                  the "folding" approach.  That is the default in this
+#                  Makefile so if you do NOT have hardware popcnt, remove all
+#                  of the -mpopcnt strings in the Makefile lines below.
+#
 default:
 	$(MAKE) -j unix-clang
 help:
 	@echo "You must specify the system which you want to compile for:"
 	@echo ""
+	@echo "make unix-clang       Unix w/clang compiler (MacOS usually)"
 	@echo "make unix-gcc         Unix w/gcc compiler"
 	@echo "make unix-icc         Unix w/icc compiler"
 	@echo "make profile          profile-guided-optimizations"

@@ -4249,11 +4249,13 @@ int main(int argc, char **argv) {
   struct passwd *pwd;
 #else
   char crafty_rc_file_spec[FILENAME_MAX];
+  SYSTEM_INFO sysinfo;
 #endif
 #if defined(UNIX)
   hardware_processors = sysconf(_SC_NPROCESSORS_ONLN);
 #else
-  hardware_processors = 0;
+  GetSystemInfo(&sysinfo);
+  hardware_processors = sysinfo.dwNumberOfProcessors;
 #endif
 /* Collect environmental variables */
   char *directory_spec = getenv("CRAFTY_BOOK_PATH");

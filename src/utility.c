@@ -1720,7 +1720,7 @@ void Print(int vb, char *fmt, ...) {
     vprintf(fmt, ap);
     fflush(stdout);
   }
-  if (1 || time_limit > 5 || tc_time_remaining[root_wtm] > 1000 || vb == 4095) {
+  if (time_limit > 5 || tc_time_remaining[root_wtm] > 1000 || vb == 4095) {
     va_start(ap, fmt);
     if (log_file) {
       vfprintf(log_file, fmt, ap);
