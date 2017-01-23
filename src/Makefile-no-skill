@@ -30,7 +30,6 @@
 #                  the corresponding position is checked to make sure all of
 #                  the bitboards are set correctly.
 #   -DEPD          If you want full EPD support built in.
-#
 #   -DLOGDIR       Path to the directory where Crafty puts the log.nnn and
 #                  game.nnn files.
 #   -DNODES        This enables the sn=x command.  Crafty will search until
@@ -52,22 +51,20 @@
 #                  can be dumped while running.
 #   -DUNIX         This identifies the target O/S as being Unix-based, if this
 #                  option is omitted, windows is assumed.
-
-mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
-current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
-CRAFTY= $(current_dir:.d=)
-CC=gcc-mp-4.8
-LDFLAGS=-pthread
-STRIP=strip
-UPX=
-
-
-#	$(MAKE) -j unix-gcc
+#
+#    Note:         If you compile on a machine with the hardware popcnt
+#                  instruction, you should use the -mpopcnt compiler option
+#                  to make the built-in intrinsic use the hardware rather than
+#                  the "folding" approach.  That is the default in this
+#                  Makefile so if you do NOT have hardware popcnt, remove all
+#                  of the -mpopcnt strings in the Makefile lines below.
+#
 default:
-	$(MAKE) -j ipro
+	$(MAKE) -j unix-clang
 help:
 	@echo "You must specify the system which you want to compile for:"
 	@echo ""
+	@echo "make unix-clang       Unix w/clang compiler (MacOS usually)"
 	@echo "make unix-gcc         Unix w/gcc compiler"
 	@echo "make unix-icc         Unix w/icc compiler"
 	@echo "make profile          profile-guided-optimizations"
@@ -78,47 +75,68 @@ help:
 
 quick:
 	$(MAKE) target=UNIX \
-		CC=icc \
- 		opt='-DSYZYGY -DSKILL -mpopcnt -DCPUS=24' \
-		CFLAGS='-Wall -Wno-array-bounds -pipe -O3' \
+		CC=clang \
+ 		opt='-DSYZYGY -DTEST -DTRACE -DCPUS=4' \
+		CFLAGS='-mpopcnt -Wall -Wno-array-bounds -pipe -O3' \
 		LDFLAGS='$(LDFLAGS) -lstdc++' \
 		crafty-make
 
 unix-gcc:
 	$(MAKE) -j target=UNIX \
-		CC=gcc-mp-4.8 \
-		opt='-DSYZYGY -DSKILL -mpopcnt -DCPUS=12' \
-		CFLAGS='-Wall -Wno-array-bounds -march=corei7 -pipe -O3 -fprofile-use \
-		-fprofile-correction -pthread' \
+		CC=gcc \
+		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-use \
+		-mpopcnt -fprofile-correction -pthread' \
 		LDFLAGS='$(LDFLAGS) -fprofile-use -pthread -lstdc++' \
 		crafty-make
 
 unix-gcc-profile:
 	$(MAKE) -j target=UNIX \
-		CC=gcc-mp-4.8 \
-		opt='-DSYZYGY -DSKILL -mpopcnt -DCPUS=12' \
-		CFLAGS='-Wall -Wno-array-bounds -march=corei7 -pipe -O3 -fprofile-arcs \
-		-pthread' \
+		CC=gcc \
+		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-arcs \
+		-mpopcnt -pthread' \
 		LDFLAGS='$(LDFLAGS) -fprofile-arcs -pthread -lstdc++ ' \
+		crafty-make
+
+unix-clang:
+	@/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-profdata merge -output=crafty.profdata *.profraw
+	$(MAKE) -j target=UNIX \
+		CC=clang \
+		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 \
+			-mpopcnt -fprofile-instr-use=crafty.profdata' \
+		LDFLAGS='$(LDFLAGS) -fprofile-use -lstdc++' \
+		crafty-make
+
+unix-clang-profile:
+	$(MAKE) -j target=UNIX \
+		CC=clang \
+		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 \
+			-mpopcnt -fprofile-instr-generate' \
+		LDFLAGS='$(LDFLAGS) -fprofile-instr-generate -lstdc++ ' \
 		crafty-make
 
 unix-icc:
 	$(MAKE) -j target=UNIX \
-		CC=icc  \
-		opt=' -DSYZYGY -DUNIX -DSKILL -mpopcnt -DCPUS=12 -DVERSION' \
-		CFLAGS='-Wall -ipo -w -O3 --param max-inline-insns-auto=100 --param inline-min-speedup=25 -ftree-loop-distribution -ftree-vectorize  -prof_use -prof_dir ./prof -fno-alias -pthread' \
-				LDFLAGS='$(LDFLAGS) -pthread -lstdc++' \
+		CC=icc \
+		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		CFLAGS='-Wall -w -O2 -prof_use -prof_dir ./prof -fno-alias \
+                        -mpopcnt -pthread' \
+		LDFLAGS='$(LDFLAGS) -pthread -lstdc++' \
 		crafty-make
 
 unix-icc-profile:
 	$(MAKE) -j target=UNIX \
 		CC=icc \
-		opt=' -DSYZYGY -DUNIX -DSKILL -mpopcnt -DCPUS=12 -DVERSION' \
-		CFLAGS='-Wall -w -Os -O2 --param max-inline-insns-auto=100 --param inline-min-speedup=5 -ftree-loop-distribution -ftree-vectorize -prof_gen -prof_dir ./prof -fno-alias -pthread' \
+		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		CFLAGS='-Wall -w -O2 -prof_gen -prof_dir ./prof -fno-alias \
+                        -mpopcnt -pthread' \
 		LDFLAGS='$(LDFLAGS) -pthread -lstdc++ ' \
 		crafty-make
 
-ipro:
+profile:
 	@rm -rf *.o
 	@rm -rf log.*
 	@rm -rf game.*
@@ -126,41 +144,18 @@ ipro:
 	@rm -rf *.gcda
 	@mkdir prof
 	@touch *.c *.h
-	$(MAKE) -j unix-icc-profile
+	$(MAKE) -j unix-clang-profile
 	@echo "#!/bin/csh" > runprof
-	@echo "$(CRAFTY) <<EOF" >>runprof
-	@echo "bench -3" >>runprof
+	@echo "./crafty <<EOF" >>runprof
+	@echo "bench" >>runprof
 	@echo "mt=0" >>runprof
 	@echo "quit" >>runprof
 	@echo "EOF" >>runprof
 	@chmod +x runprof
 	@./runprof
 	@rm runprof
-	@touch *.c *.cpp *.h
-	$(MAKE) -j unix-icc
-	$(STRIP) $(CRAFTY)
-
-gpro:
-	@rm -rf *.o
-	@rm -rf log.*
-	@rm -rf game.*
-	@rm -rf prof
-	@rm -rf *.gcda
-	@mkdir prof
-	@touch *.c  *.h
-	$(MAKE) -j unix-gcc-profile
-	@echo "#!/bin/csh" > runprof
-	@echo "$(CRAFTY) <<EOF" >>runprof
-	@echo "bench -3" >>runprof
-	@echo "mt=0" >>runprof
-	@echo "quit" >>runprof
-	@echo "EOF" >>runprof
-	@chmod +x runprof
-	@./runprof
-	@rm runprof
-	@touch *.c *.cpp *.h
-	$(MAKE) -j unix-gcc
-	$(STRIP) $(CRAFTY)
+	@touch *.c *.h
+	$(MAKE) -j unix-clang
 
 
 #
@@ -185,19 +180,18 @@ objects = crafty.o
 
 opts = $(opt) -D$(target)
 
-#	@$(MAKE) -j opt='$(opt)'  CFLAGS='$(CFLAGS)' $(CRAFTY)
 crafty-make:
-	@$(MAKE) opt='$(opt)'  CFLAGS='$(CFLAGS)' $(CRAFTY)
+	@$(MAKE) opt='$(opt)' CFLAGS='$(CFLAGS)' crafty
 
 crafty.o: *.c *.h
 
-$(CRAFTY):	$(objects)
-	$(CC) $(LDFLAGS) -o $(CRAFTY) $(objects) -lm  $(LIBS)
+crafty:	$(objects)
+	$(CC) $(LDFLAGS) -g -o crafty $(objects) -lm  $(LIBS)
 
 evaluate.o: evaluate.h
 
 clean:
-	-rm -f *.o $(CRAFTY)
+	-rm -f *.o crafty
 
 $(objects): chess.h data.h
 
