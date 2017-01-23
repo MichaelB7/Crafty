@@ -76,7 +76,7 @@ help:
 quick:
 	$(MAKE) target=UNIX \
 		CC=clang \
- 		opt='-DSYZYGY -DTEST -DTRACE -DCPUS=4' \
+ 		opt='-DSYZYGY -DSKILL -DTRACE -DCPUS=12' \
 		CFLAGS='-mpopcnt -Wall -Wno-array-bounds -pipe -O3' \
 		LDFLAGS='$(LDFLAGS) -lstdc++' \
 		crafty-make
@@ -84,7 +84,7 @@ quick:
 unix-gcc:
 	$(MAKE) -j target=UNIX \
 		CC=gcc \
-		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		opt='-DSYZYGY -DSKILL -DCPUS=12' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-use \
 		-mpopcnt -fprofile-correction -pthread' \
 		LDFLAGS='$(LDFLAGS) -fprofile-use -pthread -lstdc++' \
@@ -93,17 +93,17 @@ unix-gcc:
 unix-gcc-profile:
 	$(MAKE) -j target=UNIX \
 		CC=gcc \
-		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		opt='-DSYZYGY -DSKILL -DCPUS=12' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-arcs \
 		-mpopcnt -pthread' \
 		LDFLAGS='$(LDFLAGS) -fprofile-arcs -pthread -lstdc++ ' \
 		crafty-make
 
 unix-clang:
-	@/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-profdata merge -output=crafty.profdata *.profraw
+	@/opt/local/libexec/llvm-3.9/bin/llvm-profdata merge -output=crafty.profdata *.profraw
 	$(MAKE) -j target=UNIX \
 		CC=clang \
-		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		opt='-DSYZYGY -DSKILL -DCPUS=12' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 \
 			-mpopcnt -fprofile-instr-use=crafty.profdata' \
 		LDFLAGS='$(LDFLAGS) -fprofile-use -lstdc++' \
@@ -112,7 +112,7 @@ unix-clang:
 unix-clang-profile:
 	$(MAKE) -j target=UNIX \
 		CC=clang \
-		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		opt='-DSYZYGY -DSKILL -DCPUS=12' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 \
 			-mpopcnt -fprofile-instr-generate' \
 		LDFLAGS='$(LDFLAGS) -fprofile-instr-generate -lstdc++ ' \
@@ -121,7 +121,7 @@ unix-clang-profile:
 unix-icc:
 	$(MAKE) -j target=UNIX \
 		CC=icc \
-		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		opt='-DSYZYGY -DSKILL -DCPUS=12' \
 		CFLAGS='-Wall -w -O2 -prof_use -prof_dir ./prof -fno-alias \
                         -mpopcnt -pthread' \
 		LDFLAGS='$(LDFLAGS) -pthread -lstdc++' \
@@ -130,7 +130,7 @@ unix-icc:
 unix-icc-profile:
 	$(MAKE) -j target=UNIX \
 		CC=icc \
-		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		opt='-DSYZYGY -DSKILL -DCPUS=12' \
 		CFLAGS='-Wall -w -O2 -prof_gen -prof_dir ./prof -fno-alias \
                         -mpopcnt -pthread' \
 		LDFLAGS='$(LDFLAGS) -pthread -lstdc++ ' \
@@ -144,7 +144,7 @@ profile:
 	@rm -rf *.gcda
 	@mkdir prof
 	@touch *.c *.h
-	$(MAKE) -j unix-clang-profile
+	$(MAKE) -j unix-gcc-profile
 	@echo "#!/bin/csh" > runprof
 	@echo "./crafty <<EOF" >>runprof
 	@echo "bench" >>runprof
@@ -155,7 +155,7 @@ profile:
 	@./runprof
 	@rm runprof
 	@touch *.c *.h
-	$(MAKE) -j unix-clang
+	$(MAKE) -j unix-gcc
 
 
 #

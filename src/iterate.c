@@ -179,6 +179,7 @@ int Iterate(int wtm, int search_type, int root_list_done) {
  ************************************************************
  */
       TimeSet(search_type);
+	  if (elo_sleep) sleep (time_limit/167);
       iteration = 1;
       noise_block = 0;
       force_print = 0;

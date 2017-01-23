@@ -4246,6 +4246,9 @@
  *           now notifies xboard/winboard to do this automatically so using    *
  *           those interfaces requires no changes to anything.                 *
  *                                                                             *
+ *    25.3   Play by ELO Rating added by Mike Byrne, no other changes. Use the *
+ *           -DSKILL option to get the full range from 800 to 2600.            *
+ *                                                                             *
  *******************************************************************************
  */
 int main(int argc, char **argv) {

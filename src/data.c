@@ -442,7 +442,7 @@ const int OOOsqs[2][3] = {{E8, D8, C8}, {E1, D1, C1}};
 const int OOfrom[2] = {E8, E1};
 const int OOto[2] =   {G8, G1};
 const int OOOto[2] =  {C8, C1};
-#define VERSION      "25.2"
+#define VERSION      "25.3"
 char version[8] = {VERSION};
 PLAYING_MODE mode = normal_mode;
 int batch_mode = 0;                  /* no asynch reads */
@@ -493,6 +493,12 @@ char book_path[128] = {BOOKDIR};
 char log_path[128] = {LOGDIR};
 char tb_path[128] = {TBDIR};
 char rc_path[128] = {RCDIR};
+int elo_rating = 0;
+int lower_elo = 0;
+int upper_elo = 0;
+int stated_rating = 0;
+int use_rating = 0;
+int elo_sleep = 0;
 int initialized = 0;
 int kibitz = 0;
 int post = 0;
