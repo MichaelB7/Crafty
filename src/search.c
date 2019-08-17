@@ -138,13 +138,13 @@ int Search(TREE * RESTRICT tree, int ply, int depth, int wtm, int alpha,
  *                                                          *
  *  EGTBs.  Now it's time to try a probe into the endgame   *
  *  tablebase files.  This is done if we notice that there  *
- *  are 6 or fewer pieces left on the board AND the 50 move *
+ *  are N or fewer pieces left on the board AND the 50 move *
  *  counter is zero which enables probing the WDL EGTBs     *
  *  correctly.  Probing after a capture won't work as it is *
  *  possible that there is a necessary pawn push here and   *
  *  there to reset the 50 move counter, otherwise we could  *
  *  think we were following a winning path but heading to a *
- *  draw.                                                   *
+ *  draw. (N = EGTB_use).                                   *
  *                                                          *
  *  This is another way to get out of the search quickly,   *
  *  but not as quickly as the previous steps since this can *
@@ -184,7 +184,7 @@ int Search(TREE * RESTRICT tree, int ply, int depth, int wtm, int alpha,
           Kings(white) | Kings(black), Queens(white) | Queens(black),
           Rooks(white) | Rooks(black), Bishops(white) | Bishops(black),
           Knights(white) | Knights(black), Pawns(white) | Pawns(black),
-          Reversible(ply), 0, EnPassant(ply), wtm, HashKey);
+          Reversible(ply), 0, EnPassant(ply), wtm);
       if (tb_result != TB_RESULT_FAILED) {
         tree->egtb_hits++;
         switch (tb_result) {
@@ -533,7 +533,7 @@ int SearchMoveList(TREE * RESTRICT tree, int ply, int depth, int wtm,
             !(PawnPush(wtm, tree->curmv[ply]))) {
           if (depth < FP_depth && !check &&
               MaterialSTM(wtm) + FP_margin[depth] <= alpha && !pv_node) {
-            tree->moves_fpruned++;
+            tree->futility_moves_pruned++;
             break;
           }
 /*
@@ -558,7 +558,7 @@ int SearchMoveList(TREE * RESTRICT tree, int ply, int depth, int wtm,
  */
           if (order > LMP[depth] && depth < LMP_depth && !pv_node && !check &&
               alpha > -MATE + 300 && !CaptureOrPromote(tree->curmv[ply])) {
-            tree->moves_mpruned++;
+            tree->late_moves_pruned++;
             break;
           }
 /*

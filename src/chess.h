@@ -91,7 +91,6 @@
 #  define ROOK_VALUE                             490
 #  define QUEEN_VALUE                           1000
 #  define KING_VALUE                           40000
-#  define FOREVER                                  1
 #  if !defined(CLOCKS_PER_SEC)
 #    define CLOCKS_PER_SEC 1000000
 #  endif
@@ -253,8 +252,8 @@ typedef struct tree {
   uint64_t egtb_hits;
   uint64_t extensions_done;
   uint64_t qchecks_done;
-  uint64_t moves_fpruned;
-  uint64_t moves_mpruned;
+  uint64_t futility_moves_pruned;
+  uint64_t late_moves_pruned;
   uint64_t LMR_done[16];
   uint64_t null_done[16];
 /* thread stuff */
@@ -644,7 +643,4 @@ extern void WinFreeInterleaved(void *, size_t);
         tree->pv[ply-1].pathl=ply;                                            \
         tree->pv[ply-1].pathh=ph;                                             \
         tree->pv[ply-1].pathd=iteration;} while(0)
-#  if defined(INLINEASM)
-#    include "inline.h"
-#  endif
 /* *INDENT-ON* */

@@ -677,7 +677,7 @@ int ThreadWait(int tid, TREE * RESTRICT waiting) {
  *                                                          *
  ************************************************************
  */
-  while (FOREVER) {
+  while (1) {
     tstart = ReadClock();
     while (!thread[tid].tree && (!waiting || waiting->nprocs) && !Join(tid) &&
         !thread[tid].terminate);
@@ -778,8 +778,8 @@ void CopyFromParent(TREE * RESTRICT child) {
   child->egtb_hits = 0;
   child->extensions_done = 0;
   child->qchecks_done = 0;
-  child->moves_fpruned = 0;
-  child->moves_mpruned = 0;
+  child->futility_moves_pruned = 0;
+  child->late_moves_pruned = 0;
   for (i = 0; i < 16; i++) {
     child->LMR_done[i] = 0;
     child->null_done[i] = 0;
@@ -858,8 +858,8 @@ void CopyToParent(TREE * RESTRICT parent, TREE * RESTRICT child, int value) {
   parent->egtb_hits += child->egtb_hits;
   parent->extensions_done += child->extensions_done;
   parent->qchecks_done += child->qchecks_done;
-  parent->moves_fpruned += child->moves_fpruned;
-  parent->moves_mpruned += child->moves_mpruned;
+  parent->futility_moves_pruned += child->futility_moves_pruned;
+  parent->late_moves_pruned += child->late_moves_pruned;
   for (i = 1; i < 16; i++) {
     parent->LMR_done[i] += child->LMR_done[i];
     parent->null_done[i] += child->null_done[i];

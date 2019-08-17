@@ -4,7 +4,7 @@
 #if defined(SYZYGY)
 #  include "tbprobe.h"
 #endif
-/* last modified 07/11/16 */
+/* last modified 08/13/19 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -290,7 +290,7 @@ int RootMoveEGTB(int wtm) {
             value = 3;
             break;
           default:
-            value = TB_GET_DTZ(tb_result);;
+            value = TB_GET_DTZ(tb_result);
             break;
         }
         if (result != TB_LOSS && result != TB_WIN) {
@@ -301,6 +301,8 @@ int RootMoveEGTB(int wtm) {
         }
         piece = abs(PcOnSq(TB_GET_FROM(tb_result)));
         captured = abs(PcOnSq(TB_GET_TO(tb_result)));
+        if TB_GET_EP(tb_result)
+          captured = 1;
         cmove =
             TB_GET_FROM(tb_result) | (TB_GET_TO(tb_result) << 6) | (piece <<
             12) | (captured << 15);

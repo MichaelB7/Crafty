@@ -2,7 +2,7 @@
 #include "data.h"
 #include "epdglue.h"
 #include "tbprobe.h"
-/* last modified 08/03/16 */
+/* last modified 08/13/19 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -102,8 +102,8 @@ int Iterate(int wtm, int search_type, int root_list_done) {
   tree->egtb_hits = 0;
   tree->extensions_done = 0;
   tree->qchecks_done = 0;
-  tree->moves_fpruned = 0;
-  tree->moves_mpruned = 0;
+  tree->futility_moves_pruned = 0;
+  tree->late_moves_pruned = 0;
   for (i = 0; i < 16; i++) {
     tree->LMR_done[i] = 0;
     tree->null_done[i] = 0;
@@ -179,7 +179,6 @@ int Iterate(int wtm, int search_type, int root_list_done) {
  ************************************************************
  */
       TimeSet(search_type);
-	  if (elo_sleep) sleep (time_limit/167);
       iteration = 1;
       noise_block = 0;
       force_print = 0;
@@ -613,8 +612,8 @@ int Iterate(int wtm, int search_type, int root_list_done) {
         Print(8, "  nps=%s\n", DisplayKMB(nodes_per_second, 0));
         Print(8, "        chk=%s", DisplayKMB(tree->extensions_done, 0));
         Print(8, "  qchk=%s", DisplayKMB(tree->qchecks_done, 0));
-        Print(8, "  fp=%s", DisplayKMB(tree->moves_fpruned, 0));
-        Print(8, "  mcp=%s", DisplayKMB(tree->moves_mpruned, 0));
+        Print(8, "  fp=%s", DisplayKMB(tree->futility_moves_pruned, 0));
+        Print(8, "  mcp=%s", DisplayKMB(tree->late_moves_pruned, 0));
         Print(8, "  50move=%d",
             (ReversibleMove(last_pv.path[1]) ? Reversible(0) + 1 : 0));
         if (tree->egtb_hits)

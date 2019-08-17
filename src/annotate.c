@@ -263,7 +263,7 @@ void Annotate() {
         return;
       }
     }
-    while (FOREVER) {
+    while (1) {
       fflush(annotate_out);
       move = ReadNextMove(tree, buffer, 0, wtm);
       if (move <= 0)

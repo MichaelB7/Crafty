@@ -41,7 +41,7 @@ linelength n................... sets line length to n.  A really large value
                                 will produce 1 line PVs, making parsing easier
 list........................... update/display GM/IM/computer lists.
 lmp base scale................. LMP pruning move counts
-lmr min max depths moves scale. LMR reduction matrix generator
+lmr min max bias moves scale... LMR reduction matrix generator
 load file title................ load a position from problem file, starting
                                 with line containing title, ending on exit.
 log on|off..................... turn logging on/off.
@@ -86,7 +86,6 @@ smp............................ sets SMP parameters (help smp for details)
 sn n........................... sets absolute search node limit.
 speech on|off.................. enables (disables) audio output.
 st n........................... sets absolute search time.
-store val...................... stores position/score (position.bin).
 swindle on|off................. enables/disables swindle mode.
 tags........................... list PGN header tags.
 test file [N].................. test a suite of problems.
@@ -158,16 +157,16 @@ actually runs a parallel search over a small set of positions repeatedly, and
 to properly tune things, it needs to use the max configuration you will ever
 want to use.  If you forget, autotune will refuse to run.  The command is:
 
-autotune <time> <accuracy>
+autotune [time] [accuracy]
 
-The <time> argument tunes the parallel search stuff for this time limit.  The
+The [time] argument tunes the parallel search stuff for this time limit.  The
 only real place where this might be useful is for very fast vs very slow time
 limits, since a fast search probably needs to be a bit more aggressive if it
 is going to have any hope of using multiple threads.  Once you get to a time
 limit of 30 - 60 seconds, going further wont help at all and can GREATLY
 increase the run-time of the automatic tuning code.
 
-<accuracy> is simply a number that tells Crafty how many times to run a test
+[accuracy] is simply a number that tells Crafty how many times to run a test
 for a specific tuning option.  It will run this many tests and then use the
 average of the run times for the timing value.  Four (4) provides pretty
 good accuracy, anything less than four often runs afoul of SMP non-determinism
@@ -447,12 +446,12 @@ pondering the right move and saving time on our clock.
 <end>
 
 <mode>
-null <min> <divisor>
+null [min] [divisor]
 
 This command allows you to customize the null-move search parameters.  The
 formula Crafty uses is as follows:
 
-  R = <min> + depth / <divisor>
+  R = [min] + depth / [divisor]
 
 The default values are 3 and 10.  When remaining depth is < 10, the R value
 is 3.  If remaining depth is > 10 and < 19, R=4, and so forth.  Smaller
@@ -463,7 +462,7 @@ be dangerous.
 <end>
 
 <personality>
-personality load|save filename <or> personality n v
+personality load|save filename -or- personality n v
 
 perspath path-to-personality-directory
 
@@ -625,12 +624,12 @@ yourself, that will work as well, but it is more prone to errors.
 <smp>
 smp commands are used to control the SMP search.  
 
-smpaffinity <n> <p> is used to enable or disable processor affinity.  "-1"
+smpaffinity [n] [p] is used to enable or disable processor affinity.  "-1"
 disables affinity and lets threads run on any available core.  If you use an
-integer <n> then thread zero will bind itself to cpu <n> and each additional
+integer [n] then thread zero will bind itself to cpu [n] and each additional
 thread will bind to the next higher cpu number.  This is useful if you try to
 run two copies of crafty on the same machine, now you can cause one to bind
-to the first <n> cores, and the second to the last <n> cores.  For the first
+to the first [n] cores, and the second to the last [n] cores.  For the first
 instance of Crafty, you would use smpaffinity=0, and for the second
 smpaffinity=8, assuming you are running 8 threads per copy on a 16 cpu machine.
 If you get this wrong, you can have more than one thread on the same cpu which
@@ -645,41 +644,41 @@ physical core 0, then 8 through 15 are on physical core 1, etc.  A value of "8"
 will map threads to physical cores correctly as each thread is spaced on the
 current processor core + 8, which is correct.
 
-smpmt <n> sets the total number of allowable threads for the search.  The
+smpmt [n] sets the total number of allowable threads for the search.  The
 default is one (1) as Crafty does not assume it should use all available
 resources.  For optimal performance this should be set to the number of
 physical cores your machine has, which does NOT include hyperthreaded cores.
                             
-smpgroup <n> sets the maximum number of threads at any single split point to
-<n>, with the exception of split points fairly close to the root  where ALL
+smpgroup [n] sets the maximum number of threads at any single split point to
+[n], with the exception of split points fairly close to the root  where ALL
 threads are allowed to split together ignoring this limit.  Note that this is
 ignored in the first 1/2 of the tree (the nodes closer to the root).  There
 it is actually good to split and get all active threads involved.
 
-smpmin <n> avoids splitting when remaining depth < n.  This is used to balance
+smpmin [n] avoids splitting when remaining depth < n.  This is used to balance
 splitting overhead cost against the speed gain the parallel search produces.
 The default is currently 5 (which could change with future generations of
 Intel hardware) but values between 4 and 8 will work.  Larger values allow
 somewhat fewer splits, which reduces overhead, but it also increases the
 percentage of the time where a thread is waiting on work.
 
-smpnuma <n> enables (a) or disables (0) NUMA mode.  This defaults to zero, 
+smpnuma [n] enables (a) or disables (0) NUMA mode.  This defaults to zero, 
 which is best for most users.  If you have a multiple-socket machine, or one
 that is NUMA even though it only has one socket, you should enable this.  This
 will cause Crafty to split the hash tables across all NUMA nodes to prevent
 the formation of "hot spots" that would cause unnecessary conflicts.
                    
-smproot <n> enables (1) or disables (0) splitting the tree at the root.  This
+smproot [n] enables (1) or disables (0) splitting the tree at the root.  This
 defaults to 1 which produces the best performance by a signficiant margin. 
 But it can be disabled if you are playing with code changes.
 
-smpnice <1/0> enables or disables the "nice facility".  With smpnice=1, at the
+smpnice [1|0] enables or disables the "nice facility".  With smpnice=1, at the
 end of a search (non-pondering) the extra threads will terminate rather than sit
 in a busy spin loop burning cpu cycles.  smpnice=0 is slightly more efficient
 but will result in 100% of the machine being used whether the search is running
 or waiting on input.
 
-smpnodes <n> sets the number of NUMA nodes on your hardware.  This is used to
+smpnodes [n] sets the number of NUMA nodes on your hardware.  This is used to
 try to split with threads on the same node when practical, to improve memory
 access time.
 
@@ -719,11 +718,11 @@ Note that this command may refer to a normal EPD test file as well and
 Crafty will run that test in the same way, but Crafty will notice it is an
 EPD test file rather than a "crafty" test file and handle it appropriately.
 
-A new option to this command is of the form "test filename <margin>" where
-<margin> is greater than 10 (which means it will not be an early exit counter.)
+A new option to this command is of the form "test filename [margin]" where
+[margin] is greater than 10 (which means it will not be an early exit counter.)
 In this case, Crafty takes that value as a score margin.  It will read in the
 FEN/EPD records silently, do a search, and if the absolute value of the final
-score is less than <margin>, the FEN/EPD is written to a new file,
+score is less than [margin], the FEN/EPD is written to a new file,
 "filename.screened".  I use this to create an opening position file for
 cluster testing where I can create a set of positions using the -DPOSITIONS
 compile option, and then test the resulting "openings.epd" file that creates
@@ -780,7 +779,7 @@ wants to average the time left over the moves remaining until the
 next time control.  This command allows the user to influence how the
 time is allocated on the first few moves out of book.
 
-timebook <factor> <moves>
+timebook [factor] [moves]
 
 factor is a number expressed as a percentage, and specifies how much
 extra time (in terms of the normal target time) to use.  For example,
@@ -867,7 +866,7 @@ re-enter the moves if the hardware crashes.  If you accidentally type
 the last game, although you will need to set the time control information,
 and anything else that is not in the .craftyrc file.
 
-5.  reset <n>.  This command is used to back the game up if a different
+5.  reset [n].  This command is used to back the game up if a different
 move is to be tried, or if an incorrect move was entered by mistake.  It
 depends on the current side to move, and the command "reset 13" will back
 the game up to move 13, where the current side on move is still on move,
@@ -934,7 +933,7 @@ am searching and it is my move.
 game and at move 37, you enter Rfe1 rather than Rae1.  To correct this,
 you have to do a couple of things.  First, Crafty is now searching, and
 if you try to reset the position, it won't accept this command.  To stop
-the search, type ? (followed by a <RETURN> of course) to tell Crafty to
+the search, type ? (followed by a CR of course) to tell Crafty to
 "move now".  Once it displays the move it would play in response to the
 incorrect move, it will start its "ponder search" but now the reset
 command will work.  Simply type "r 37" to back up to move 37, then type

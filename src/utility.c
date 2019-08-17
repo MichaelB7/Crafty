@@ -1946,7 +1946,7 @@ int ReadPGN(FILE * input, int option) {
  *                                                          *
  ************************************************************
  */
-  while (FOREVER) {
+  while (1) {
     if (!data) {
       eof = fgets(input_buffer, 4096, input);
       if (!eof)
@@ -2035,7 +2035,7 @@ int ReadPGN(FILE * input, int option) {
       last_good_line = lines_read;
       analysis_move[0] = 0;
       if (strchr(buffer, '{') || strchr(buffer, '('))
-        while (FOREVER) {
+        while (1) {
           char *skip, *ch;
 
           analysis = 1;

@@ -43,7 +43,7 @@ void Analyze() {
  *                                                          *
  ************************************************************
  */
-  while (FOREVER) {
+  while (1) {
     do {
       last_pv.pathd = 0;
       last_pv.pathl = 0;

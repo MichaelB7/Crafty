@@ -13,12 +13,6 @@ extern int time_used_opponent;
 extern uint64_t total_moves;
 extern int allow_cores;
 extern int allow_memory;
-extern int elo_rating;
-extern int lower_elo;
-extern int upper_elo;
-extern int stated_rating;
-extern int use_rating;
-extern int elo_sleep;
 extern int initialized;
 extern int early_exit;
 extern char *AK_list[128];
@@ -320,10 +314,6 @@ extern uint64_t minus7dir[65];
 extern uint64_t minus8dir[65];
 extern uint64_t minus9dir[65];
 extern uint64_t mask_eptest[64];
-#if !defined(INLINEASM)
-extern unsigned char msb[65536];
-extern unsigned char lsb[65536];
-#endif
 extern unsigned char msb_8bit[256];
 extern unsigned char lsb_8bit[256];
 extern unsigned char pop_cnt_8bit[256];

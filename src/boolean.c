@@ -16,6 +16,7 @@
  *******************************************************************************
  */
 #if !defined(INLINEASM)
+/*
 int MSB(uint64_t arg1) {
   if (arg1 >> 48)
     return msb[arg1 >> 48] + 48;
@@ -43,4 +44,5 @@ int PopCnt(uint64_t arg1) {
     arg1 &= arg1 - 1;
   return c;
 }
+*/
 #endif

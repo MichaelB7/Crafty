@@ -4246,8 +4246,15 @@
  *           now notifies xboard/winboard to do this automatically so using    *
  *           those interfaces requires no changes to anything.                 *
  *                                                                             *
- *    25.3   Play by ELO Rating added by Mike Byrne, no other changes. Use the *
- *           -DSKILL option to get the full range from 800 to 2600.            *
+ *    25.3   Two bugs fixed that were significant.  First, the older syzygy    *
+ *           probe code I was using had some sort of bug it seems.  I replaced *
+ *           it with the most recent and that solved tb probe failures dealing *
+ *           with an enpassant capture that was the only legal move.  Once     *
+ *           that was fixed, I then found that I had not factored in the       *
+ *           captured piece = pawn for EP captures (where I was calling the    *
+ *           probe code).  This caused a new bug once the tbprobe.c code was   *
+ *           updated.  That is now fixed also, leaving everything working as   *
+ *           it should, so far as I know through a lot of testing.             *
  *                                                                             *
  *******************************************************************************
  */

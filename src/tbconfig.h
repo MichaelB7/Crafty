@@ -1,6 +1,7 @@
 /*
  * tbconfig.h
  * (C) 2015 basil, all rights reserved,
+ * Modifications Copyright 2016-2017 Jon Dart
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,11 +23,25 @@
  */
 
 #ifndef TBCONFIG_H
-#  define TBCONFIG_H
+#define TBCONFIG_H
 
 /****************************************************************************/
 /* BUILD CONFIG:                                                            */
 /****************************************************************************/
+
+/*
+ * Define TB_CUSTOM_POP_COUNT to override the internal popcount
+ * implementation. To do this supply a macro or function definition
+ * here:
+ */
+#define TB_CUSTOM_POP_COUNT(x) PopCnt(x)
+
+/*
+ * Define TB_CUSTOM_LSB to override the internal lsb
+ * implementation. To do this supply a macro or function definition
+ * here:
+ */
+#define TB_CUSTOM_LSB(x) LSB(x)
 
 /*
  * Define TB_NO_STDINT if you do not want to use <stdint.h> or it is not
@@ -44,12 +59,39 @@
  * Define TB_NO_THREADS if your program is not multi-threaded.
  */
 /* #define TB_NO_THREADS */
-#  define TB_HAVE_THREADS
 
 /*
  * Define TB_NO_HELPER_API if you do not need the helper API.
  */
 /* #define TB_NO_HELPER_API */
+
+/*
+ * Define TB_NO_HW_POP_COUNT if there is no hardware popcount instruction.
+ *
+ * Note: if defined, TB_CUSTOM_POP_COUNT is always used in preference
+ * to any built-in popcount functions.
+ *
+ * If no custom popcount function is defined, and if the following
+ * define is not set, the code will attempt to use an available hardware
+ * popcnt (currently supported on x86_64 architecture only) and otherwise
+ * will fall back to a software implementation.
+ */
+/* #define TB_NO_HW_POP_COUNT */
+
+/***************************************************************************/
+/* SCORING CONSTANTS                                                       */
+/***************************************************************************/
+/*
+ * Fathom can produce scores for tablebase moves. These depend on the
+ * value of a pawn, and the magnitude of mate scores. The following
+ * constants are representative values but will likely need
+ * modification to adapt to an engine's own internal score values.
+ */
+#define TB_VALUE_PAWN 100  /* value of pawn in endgame */
+#define TB_VALUE_MATE 32000
+#define TB_VALUE_INFINITE 32767 /* value above all normal score values */
+#define TB_VALUE_DRAW 0
+#define TB_MAX_MATE_PLY 255
 
 /***************************************************************************/
 /* ENGINE INTEGRATION CONFIG                                               */
@@ -63,32 +105,29 @@
  * to avoid redundancy.
  */
 
-#  include "chess.h"
-#  include "data.h"
-
 /*
  * Define TB_KING_ATTACKS(square) to return the king attacks bitboard for a
  * king at `square'.
  */
-#  define TB_KING_ATTACKS(square)             KingAttacks(square)
+#define TB_KING_ATTACKS(square)          king_attacks[square]
 
 /*
  * Define TB_KNIGHT_ATTACKS(square) to return the knight attacks bitboard for
  * a knight at `square'.
  */
-#  define TB_KNIGHT_ATTACKS(square)           KnightAttacks(square)
+#define TB_KNIGHT_ATTACKS(square)        knight_attacks[square]
 
 /*
  * Define TB_ROOK_ATTACKS(square, occ) to return the rook attacks bitboard
  * for a rook at `square' assuming the given `occ' occupancy bitboard.
  */
-#  define TB_ROOK_ATTACKS(square, occ)        RookAttacks(square, occ)
+#define TB_ROOK_ATTACKS(square, occ)     RookAttacks(square, occ)
 
 /*
  * Define TB_BISHOP_ATTACKS(square, occ) to return the bishop attacks bitboard
  * for a bishop at `square' assuming the given `occ' occupancy bitboard.
  */
-#  define TB_BISHOP_ATTACKS(square, occ)      BishopAttacks(square, occ)
+#define TB_BISHOP_ATTACKS(square, occ)   BishopAttacks(square, occ)
 
 /*
  * Define TB_QUEEN_ATTACKS(square, occ) to return the queen attacks bitboard
@@ -96,7 +135,7 @@
  * NOTE: If no definition is provided then tbprobe will use:
  *       TB_ROOK_ATTACKS(square, occ) | TB_BISHOP_ATTACKS(square, occ)
  */
-#  define TB_QUEEN_ATTACKS(square, occ)       QueenAttacks(square, occ)
+#define TB_QUEEN_ATTACKS(square, occ) QueenAttacks(square, occ)
 
 /*
  * Define TB_PAWN_ATTACKS(square, color) to return the pawn attacks bitboard
@@ -106,6 +145,6 @@
  *       nothing.  Etc.
  * NOTE: This definition must not include en passant captures.
  */
-#  define TB_PAWN_ATTACKS(square, color)      PawnAttacks(color, square)
+/* #define TB_PAWN_ATTACKS(square, color)   <DEFINITION> */
 
 #endif

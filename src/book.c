@@ -4,7 +4,7 @@
 #if defined(UNIX)
 #  include <unistd.h>
 #endif
-/* last modified 05/08/14 */
+/* last modified 08/12/19 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -746,6 +746,7 @@ int Book(TREE * RESTRICT tree, int wtm) {
     }
     which = Min(which, last_move - 1);
     tree->pv[0].path[1] = book_moves[which];
+    tree->pv[0].pathv = 0;
     percent_played = 100 * bs_played[which] / Max(total_played, 1);
     total_played = bs_played[which];
     m1_status = book_status[which];
@@ -1270,7 +1271,7 @@ void Bookup(TREE * RESTRICT tree, int nargs, char **args) {
       wins++;
     if (temp.status & 32 && temp.percent_play & 128)
       losses++;
-    while (FOREVER) {
+    while (1) {
       temp = BookupNextPosition(files, 0);
       memcpy((char *) &next.position, temp.position, 8);
       next.status_played = temp.status << 24;

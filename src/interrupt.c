@@ -40,7 +40,7 @@ void Interrupt(int ply) {
  ************************************************************
  */
   else
-    while (FOREVER) {
+    while (1) {
       readstat = Read(0, buffer);
       if (readstat <= 0)
         break;

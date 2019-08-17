@@ -953,6 +953,7 @@ void InitializeMasks(void) {
  masks to determine if a pawn has nearby neighbors or not.
  */
 #if !defined(INLINEASM)
+/*
   msb[0] = 64;
   lsb[0] = 16;
   for (i = 1; i < 65536; i++) {
@@ -964,6 +965,7 @@ void InitializeMasks(void) {
           lsb[i] = j;
       }
   }
+*/
 #endif
   msb_8bit[0] = 8;
   lsb_8bit[0] = 8;

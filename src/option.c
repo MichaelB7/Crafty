@@ -587,50 +587,6 @@ int Option(TREE * RESTRICT tree) {
 /*
  ************************************************************
  *                                                          *
- *  "elo" command sets Crafty to play at an ELo Rating      *
- *  based on number of nodes searched.  It also incorprates *
- *  a time delay ( a non busy sleep) so crafty  will not     *
- *  play instantly.  It also includes a random component in *
- *  nodes search to increase variability in play.           *
- *                                                          *
- ************************************************************
- */
-#if defined(SKILL)
-  else if (OptionMatch("elo", *args)) {
-	  if (nargs < 2) {
-		  printf("usage:  elo <rating 800 - 2600>\n");
-		  return 1;
-	  }
-	  stated_rating = Max(800,Min(2600,atoi(args[1])));
-	  elo_rating =  Max(1200,Min(2600,stated_rating));
-	  Print(32, "Elo rating set to %d.\n", stated_rating);
-#else
-  else if (OptionMatch("elo", *args)) {
-	  if (nargs < 2) {
-		  printf("usage:  elo <rating 1200 - 2600>\n");
-		  return 1;
-	  }
-	  stated_rating = Max(1200,Min(2600,atoi(args[1])));
-	  elo_rating =  Max(1200,Min(2600,stated_rating));
-	  Print(32, "Elo rating set to %d.\n", stated_rating);
-#endif
-	  lower_elo = elo_rating - 25;
-	  upper_elo = elo_rating + 25;
-	  use_rating = rand() % (upper_elo - lower_elo +1 ) + lower_elo;
-	  search_nodes = pow(1.0069555500567,(((use_rating)/1200) -1 )
-						 + (use_rating - 1200)) * 128 ;
-	  ponder = 0;
-	  elo_sleep = 1;
-	  
-#if defined(SKILL)
-	  if (stated_rating < 1197)
-		  skill = 100 - ((1196 -  stated_rating)/4);
-#endif
-  }
-	
-/*
- ************************************************************
- *                                                          *
  *  "end" (or "quit") command terminates the program.       *
  *                                                          *
  ************************************************************
@@ -2555,7 +2511,7 @@ int Option(TREE * RESTRICT tree) {
 /*
  step 2:  read in the moves.
  */
-    do {
+    while (1) {
       move = 0;
       move = ReadNextMove(tree, buffer, 0, game_wtm);
       if (move) {
@@ -2591,7 +2547,7 @@ int Option(TREE * RESTRICT tree) {
         break;
       if (!strcmp(buffer, "exit"))
         break;
-    } while (1);
+    }
     moves_out_of_book = 0;
     printf("NOTICE: %d moves to next time control\n",
         tc_moves_remaining[root_wtm]);
@@ -3442,7 +3398,7 @@ int Option(TREE * RESTRICT tree) {
     int proc;
 
     if (nargs < 2) {
-      printf("usage:  smpmt=<threads>\n");
+      printf("usage:  cores/smpmt=<threads>\n");
       return 1;
     }
     if (thinking || pondering)
@@ -3463,8 +3419,6 @@ int Option(TREE * RESTRICT tree) {
       smp_max_threads = CPUS;
     }
     if (smp_max_threads == 1) {
-      Print(4095, "ERROR - max threads can be set to zero (0) to");
-      Print(4095, " disable parallel search, otherwise it must be > 1.\n");
       smp_max_threads = 0;
     }
     if (smp_max_threads)

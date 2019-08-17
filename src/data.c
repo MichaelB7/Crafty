@@ -424,8 +424,8 @@ uint64_t minus9dir[65];
 uint64_t mask_eptest[64];
 POSITION display;
 #if !defined(INLINEASM)
-unsigned char msb[65536];
-unsigned char lsb[65536];
+//unsigned char msb[65536];
+//unsigned char lsb[65536];
 #endif
 unsigned char msb_8bit[256];
 unsigned char lsb_8bit[256];
@@ -493,12 +493,6 @@ char book_path[128] = {BOOKDIR};
 char log_path[128] = {LOGDIR};
 char tb_path[128] = {TBDIR};
 char rc_path[128] = {RCDIR};
-int elo_rating = 0;
-int lower_elo = 0;
-int upper_elo = 0;
-int stated_rating = 0;
-int use_rating = 0;
-int elo_sleep = 0;
 int initialized = 0;
 int kibitz = 0;
 int post = 0;

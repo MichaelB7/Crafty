@@ -76,7 +76,7 @@ help:
 quick:
 	$(MAKE) target=UNIX \
 		CC=clang \
- 		opt='-DSYZYGY -DSKILL -DTRACE -DCPUS=12' \
+ 		opt='-DSYZYGY -DTEST -DTRACE -DCPUS=12' \
 		CFLAGS='-mpopcnt -Wall -Wno-array-bounds -pipe -O3' \
 		LDFLAGS='$(LDFLAGS) -lstdc++' \
 		crafty-make
@@ -84,7 +84,7 @@ quick:
 unix-gcc:
 	$(MAKE) -j target=UNIX \
 		CC=gcc \
-		opt='-DSYZYGY -DSKILL -DCPUS=12' \
+		opt='-DSYZYGY -DTEST -DCPUS=12' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-use \
 		-mpopcnt -fprofile-correction -pthread' \
 		LDFLAGS='$(LDFLAGS) -fprofile-use -pthread -lstdc++' \
@@ -93,17 +93,17 @@ unix-gcc:
 unix-gcc-profile:
 	$(MAKE) -j target=UNIX \
 		CC=gcc \
-		opt='-DSYZYGY -DSKILL -DCPUS=12' \
+		opt='-DSYZYGY -DTEST -DCPUS=12' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-arcs \
 		-mpopcnt -pthread' \
 		LDFLAGS='$(LDFLAGS) -fprofile-arcs -pthread -lstdc++ ' \
 		crafty-make
 
 unix-clang:
-	@/opt/local/libexec/llvm-3.9/bin/llvm-profdata merge -output=crafty.profdata *.profraw
+	@/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-profdata merge -output=crafty.profdata *.profraw
 	$(MAKE) -j target=UNIX \
 		CC=clang \
-		opt='-DSYZYGY -DSKILL -DCPUS=12' \
+		opt='-DSYZYGY -DTEST -DCPUS=12' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 \
 			-mpopcnt -fprofile-instr-use=crafty.profdata' \
 		LDFLAGS='$(LDFLAGS) -fprofile-use -lstdc++' \
@@ -112,7 +112,7 @@ unix-clang:
 unix-clang-profile:
 	$(MAKE) -j target=UNIX \
 		CC=clang \
-		opt='-DSYZYGY -DSKILL -DCPUS=12' \
+		opt='-DSYZYGY -DTEST -DCPUS=12' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 \
 			-mpopcnt -fprofile-instr-generate' \
 		LDFLAGS='$(LDFLAGS) -fprofile-instr-generate -lstdc++ ' \
@@ -121,7 +121,7 @@ unix-clang-profile:
 unix-icc:
 	$(MAKE) -j target=UNIX \
 		CC=icc \
-		opt='-DSYZYGY -DSKILL -DCPUS=12' \
+		opt='-DSYZYGY -DTEST -DCPUS=12' \
 		CFLAGS='-Wall -w -O2 -prof_use -prof_dir ./prof -fno-alias \
                         -mpopcnt -pthread' \
 		LDFLAGS='$(LDFLAGS) -pthread -lstdc++' \
@@ -130,13 +130,34 @@ unix-icc:
 unix-icc-profile:
 	$(MAKE) -j target=UNIX \
 		CC=icc \
-		opt='-DSYZYGY -DSKILL -DCPUS=12' \
+		opt='-DSYZYGY -DTEST -DCPUS=12' \
 		CFLAGS='-Wall -w -O2 -prof_gen -prof_dir ./prof -fno-alias \
                         -mpopcnt -pthread' \
 		LDFLAGS='$(LDFLAGS) -pthread -lstdc++ ' \
 		crafty-make
 
 profile:
+	@rm -rf *.o
+	@rm -rf log.*
+	@rm -rf game.*
+	@rm -rf prof
+	@rm -rf *.gcda
+	@mkdir prof
+	@touch *.c *.h
+	$(MAKE) -j unix-clang-profile
+	@echo "#!/bin/csh" > runprof
+	@echo "./crafty <<EOF" >>runprof
+	@echo "bench" >>runprof
+	@echo "mt=0" >>runprof
+	@echo "quit" >>runprof
+	@echo "EOF" >>runprof
+	@chmod +x runprof
+	@./runprof
+	@rm runprof
+	@touch *.c *.h
+	$(MAKE) -j unix-clang
+
+gcc-profile:
 	@rm -rf *.o
 	@rm -rf log.*
 	@rm -rf game.*
@@ -157,7 +178,6 @@ profile:
 	@touch *.c *.h
 	$(MAKE) -j unix-gcc
 
-
 #
 #  one of the two following definitions for "objects" should be used.  The
 #  default is to compile everything separately.  However, if you use the 
@@ -169,7 +189,7 @@ profile:
 
 #objects = main.o iterate.o time.o search.o quiesce.o evaluate.o thread.o \
         repeat.o hash.o next.o history.o movgen.o make.o unmake.o attacks.o \
-        see.o tbprobe.o boolean.o utility.o book.o drawn.o epd.o \
+        see.o boolean.o utility.o book.o drawn.o epd.o tbprobe.o \
         epdglue.o init.o input.o autotune.o interrupt.o option.o output.o \
         ponder.o resign.o root.o learn.o setboard.o test.o validate.o \
         annotate.o analyze.o evtest.o bench.o edit.o data.o
@@ -186,7 +206,7 @@ crafty-make:
 crafty.o: *.c *.h
 
 crafty:	$(objects)
-	$(CC) $(LDFLAGS) -g -o crafty $(objects) -lm  $(LIBS)
+	$(CC) $(LDFLAGS) -o crafty $(objects) -lm  $(LIBS)
 
 evaluate.o: evaluate.h
 
