@@ -2,7 +2,7 @@ Crafty
 Crafty is the "son" (direct descendent) of the chess program Cray Blitz.  it is designed totally around the bit-board data structure for reasons of speed of execution, ease of adding new knowledge, and a significantly cleaner overall design.  it is written totally in ANSI C with some few UNIX system calls required for I/O, etc.  
 
 ********************************************************************************
- Crafty, copyright 1996-2016 by Robert M. Hyatt, Ph.D. Crafty is a team project consisting of the following members:
+ Crafty, copyright 1996-2019 by Robert M. Hyatt, Ph.D. Crafty is a team project consisting of the following members:
        
        Robert Hyatt, Pelham, AL.              
        Mike Byrne, Pen Argyl, PA.                                              
