@@ -18,7 +18,7 @@
  *                                                                             *
  *******************************************************************************
  */
-int Option(TREE * RESTRICT tree) {
+int Option(TREE *tree) {
   int v;
 
 /*
@@ -862,7 +862,7 @@ int Option(TREE * RESTRICT tree) {
  ************************************************************
  */
   else if (OptionMatch("hash", *args)) {
-    size_t old_hash_size = hash_table_size, new_hash_size;
+    uint64_t old_hash_size = hash_table_size, new_hash_size;
 
     if (thinking || pondering)
       return 2;
@@ -2992,12 +2992,12 @@ int Option(TREE * RESTRICT tree) {
     Print(32, " %s  |\n", DisplayEvaluation(egb, 1));
     mgb = tree->score_mg;
     egb = tree->score_eg;
-    EvaluatePassedPawns(tree, black, game_wtm);
+    EvaluatePassedPawns(tree, black);
     mgb = tree->score_mg - mgb;
     egb = tree->score_eg - egb;
     mgw = tree->score_mg;
     egw = tree->score_eg;
-    EvaluatePassedPawns(tree, white, game_wtm);
+    EvaluatePassedPawns(tree, white);
     mgw = tree->score_mg - mgw;
     egw = tree->score_eg - egw;
     tb = (mgb * phase + egb * (62 - phase)) / 62;
@@ -3979,7 +3979,7 @@ int OptionMatch(char *command, char *input) {
   return 0;
 }
 
-void OptionPerft(TREE * RESTRICT tree, int ply, int depth, int wtm) {
+void OptionPerft(TREE *tree, int ply, int depth, int wtm) {
   unsigned *mv;
 #if defined(TRACE)
   static char line[256];

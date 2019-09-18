@@ -145,7 +145,7 @@ profile:
 	@mkdir prof
 	@touch *.c *.h
 	$(MAKE) -j unix-clang-profile
-	@echo "#!/bin/csh" > runprof
+	@echo "#!/bin/sh" > runprof
 	@echo "./crafty <<EOF" >>runprof
 	@echo "bench" >>runprof
 	@echo "mt=0" >>runprof
@@ -166,7 +166,7 @@ gcc-profile:
 	@mkdir prof
 	@touch *.c *.h
 	$(MAKE) -j unix-gcc-profile
-	@echo "#!/bin/csh" > runprof
+	@echo "#!/bin/sh" > runprof
 	@echo "./crafty <<EOF" >>runprof
 	@echo "bench" >>runprof
 	@echo "mt=0" >>runprof

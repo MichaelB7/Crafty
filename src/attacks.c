@@ -11,7 +11,7 @@
  *                                                                             *
  *******************************************************************************
  */
-int Attacks(TREE * RESTRICT tree, int side, int square) {
+int Attacks(TREE *tree, int side, int square) {
   if ((rook_attacks[square] & (Rooks(side) | Queens(side)))
       && (RookAttacks(square,
               OccupiedSquares) & (Rooks(side) | Queens(side))))
@@ -43,7 +43,7 @@ int Attacks(TREE * RESTRICT tree, int side, int square) {
  *                                                                             *
  *******************************************************************************
  */
-uint64_t AttacksTo(TREE * RESTRICT tree, int square) {
+uint64_t AttacksTo(TREE *tree, int square) {
   uint64_t attacks =
       (PawnAttacks(white, square) & Pawns(black)) | (PawnAttacks(black,
           square) & Pawns(white));
@@ -69,7 +69,7 @@ uint64_t AttacksTo(TREE * RESTRICT tree, int square) {
  *                                                                             *
  *******************************************************************************
  */
-uint64_t AttacksFrom(TREE * RESTRICT tree, int side, int source) {
+uint64_t AttacksFrom(TREE *tree, int side, int source) {
 
   switch (Abs(PcOnSq(source))) {
     case queen:
@@ -98,7 +98,7 @@ uint64_t AttacksFrom(TREE * RESTRICT tree, int side, int source) {
  *                                                                             *
  *******************************************************************************
  */
-uint64_t Attacked(TREE * RESTRICT tree, int side, uint64_t squares) {
+uint64_t Attacked(TREE *tree, int side, uint64_t squares) {
   uint64_t bsliders, rsliders, set;
   int square;
 

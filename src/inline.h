@@ -71,14 +71,14 @@ __forceinline int PopCnt(uint64_t a) {
 #endif
 
 __forceinline int MSB(uint64_t a) {
-  int v;
+  unsigned long v;
 
   _BitScanReverse64(&v, a);
   return v;
 }
 
 __forceinline int LSB(uint64_t a) {
-  int v;
+  unsigned long v;
 
   _BitScanForward64(&v, a);
   return v;

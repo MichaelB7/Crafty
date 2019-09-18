@@ -35,6 +35,8 @@
 #   -DNODES        This enables the sn=x command.  Crafty will search until
 #                  exactly X nodes have been searched, then the search 
 #                  terminates as if time ran out.
+#   -DNO_INTRIN    use this if your processor does not have builtin intrinsic
+#                  instructions for bit operations (PopCnt and such)
 #   -DPOSITIONS    Causes Crafty to emit FEN strings, one per book line, as
 #                  it creates a book.  I use this to create positions to use
 #                  for cluster testing.
@@ -77,7 +79,7 @@ quick:
 	$(MAKE) target=UNIX \
 		CC=clang \
  		opt='-DSYZYGY -DTEST -DTRACE -DCPUS=4' \
-		CFLAGS='-mpopcnt -Wall -Wno-array-bounds -pipe -O3' \
+		CFLAGS='-Wall -mpopcnt -Wno-array-bounds -pipe -O3' \
 		LDFLAGS='$(LDFLAGS) -lstdc++' \
 		crafty-make
 
@@ -145,7 +147,7 @@ profile:
 	@mkdir prof
 	@touch *.c *.h
 	$(MAKE) -j unix-clang-profile
-	@echo "#!/bin/csh" > runprof
+	@echo "#!/bin/sh" > runprof
 	@echo "./crafty <<EOF" >>runprof
 	@echo "bench" >>runprof
 	@echo "mt=0" >>runprof
@@ -169,7 +171,7 @@ profile:
 
 #objects = main.o iterate.o time.o search.o quiesce.o evaluate.o thread.o \
         repeat.o hash.o next.o history.o movgen.o make.o unmake.o attacks.o \
-        see.o tbprobe.o boolean.o utility.o book.o drawn.o epd.o \
+        see.o boolean.o utility.o book.o drawn.o epd.o tbprobe.o \
         epdglue.o init.o input.o autotune.o interrupt.o option.o output.o \
         ponder.o resign.o root.o learn.o setboard.o test.o validate.o \
         annotate.o analyze.o evtest.o bench.o edit.o data.o
@@ -186,7 +188,7 @@ crafty-make:
 crafty.o: *.c *.h
 
 crafty:	$(objects)
-	$(CC) $(LDFLAGS) -g -o crafty $(objects) -lm  $(LIBS)
+	$(CC) $(LDFLAGS) -o crafty $(objects) -lm  $(LIBS)
 
 evaluate.o: evaluate.h
 

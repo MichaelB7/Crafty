@@ -13,7 +13,7 @@
  *                                                                             *
  *******************************************************************************
  */
-int NextMove(TREE * RESTRICT tree, int ply, int depth, int side, int in_check) {
+int NextMove(TREE *tree, int ply, int depth, int side, int in_check) {
   unsigned *movep, *bestp;
   int hist, bestval, possible;
 
@@ -388,7 +388,7 @@ int NextMove(TREE * RESTRICT tree, int ply, int depth, int side, int in_check) {
  *                                                                             *
  *******************************************************************************
  */
-int NextRootMove(TREE * RESTRICT tree, TREE * RESTRICT mytree, int side) {
+int NextRootMove(TREE *tree, TREE *mytree, int side) {
   uint64_t total_nodes;
   int which, i, t;
 
@@ -565,7 +565,7 @@ int NextRootMoveParallel(void) {
  *                                                                             *
  *******************************************************************************
  */
-int Exclude(TREE * RESTRICT tree, int ply, int move) {
+int Exclude(TREE *tree, int ply, int move) {
   unsigned *i;
 
   if (tree->next_status[ply].exclude > &tree->next_status[ply].done[0])
@@ -586,7 +586,7 @@ int Exclude(TREE * RESTRICT tree, int ply, int move) {
  *                                                                             *
  *******************************************************************************
  */
-void NextSort(TREE * RESTRICT tree, int ply) {
+void NextSort(TREE *tree, int ply) {
   unsigned temp, *movep, *tmovep;
 
 /*

@@ -21,7 +21,7 @@
  *                                                                             *
  *******************************************************************************
  */
-void MakeMove(TREE * RESTRICT tree, int ply, int side, int move) {
+void MakeMove(TREE *tree, int ply, int side, int move) {
   uint64_t bit_move;
   int piece, from, to, captured, promote, enemy = Flip(side), cpiece;
 #if defined(DEBUG)
@@ -241,7 +241,7 @@ void MakeMove(TREE * RESTRICT tree, int ply, int side, int move) {
  *                                                                             *
  *******************************************************************************
  */
-void MakeMoveRoot(TREE * RESTRICT tree, int side, int move) {
+void MakeMoveRoot(TREE *tree, int side, int move) {
   int player;
 
 /*

@@ -38,11 +38,6 @@
 #include <stdlib.h>
 #include <string.h>
 #pragma once
-#  if !defined (UNIX)
-#    define RESTRICT __restrict
-#  else
-#    define RESTRICT
-#  endif
 #  if !defined(CPUS)
 #    define CPUS 1
 #  endif
@@ -52,15 +47,14 @@
 #  endif
 #  define CDECL
 #  define STDCALL
-/* Provide reasonable defaults for UNIX systems. */
+/* Provide reasonable defaults for non-UNIX systems. */
 #  if !defined(UNIX)
 #    undef  STDCALL
 #    define STDCALL __stdcall
-#    ifdef  VC_INLINE32
-#      undef  CDECL
-#      define CDECL __cdecl
-#    endif
+#    undef  CDECL
+#    define CDECL __cdecl
 #  endif
+/* Define paths for internal files. */
 #  if !defined(BOOKDIR)
 #    define   BOOKDIR      "."
 #  endif
@@ -147,10 +141,10 @@ typedef struct {
 typedef struct {
   uint64_t key;
   int32_t score_mg, score_eg;
-  unsigned char defects_k[2];
-  unsigned char defects_m[2];
-  unsigned char defects_q[2];
-  unsigned char passed[2];
+  uint8_t defects_k[2];
+  uint8_t defects_m[2];
+  uint8_t defects_q[2];
+  uint8_t passed[2];
 } PAWN_HASH_ENTRY;
 typedef struct {
   uint64_t entry[3];
@@ -172,9 +166,9 @@ typedef struct {
   int phase;
   int order;
   int remaining;
-  unsigned *last;
-  unsigned done[10];
-  unsigned *exclude;
+  uint32_t *last;
+  uint32_t done[10];
+  uint32_t *exclude;
 } NEXT_MOVE;
 /*
    root_move.status:
@@ -202,9 +196,9 @@ typedef struct {
 #    pragma pack()
 #  endif
 typedef struct {
-  unsigned char position[8];
-  unsigned char status;
-  unsigned char percent_play;
+  uint8_t position[8];
+  uint8_t status;
+  uint8_t percent_play;
 } BB_POSITION;
 struct personality_term {
   char *description;
@@ -213,12 +207,12 @@ struct personality_term {
   void *value;
 };
 struct autotune {
-  unsigned int min;
-  unsigned int max;
-  unsigned int increment;
+  int32_t min;
+  int32_t max;
+  int32_t increment;
   char description[64];
   char command[16];
-  unsigned int *parameter;
+  int32_t *parameter;
 };
 typedef struct tree {
 /* commonly used variables */
@@ -281,8 +275,8 @@ typedef struct thread {
   TREE *tree;
   uint64_t blocks;
   uint64_t max_blocks;
-  unsigned int idle;
-  volatile unsigned int terminate;
+  uint32_t idle;
+  volatile uint32_t terminate;
   char filler[40];
 } THREAD;
 /*
@@ -320,47 +314,53 @@ typedef struct thread {
 #  define LEGAL                        1
 #  define IN_WINDOW                    2
 #  define FAIL_HIGH                    3
-#define PopCnt(v) __builtin_popcountll(v)
-#define LSB(v)    __builtin_ctzll(v)
-#define MSB(v)    (63 - __builtin_clzll(v))
+#if defined(UNIX)
+#  define PopCnt(v) __builtin_popcountll(v)
+#  define LSB(v)    __builtin_ctzll(v)
+#  define MSB(v)    (63 - __builtin_clzll(v))
+#else
+#  define PopCnt(v) __popcnt64(v)
+#  define LSB(v)    (63 - __lzcnt64(v & ~(v-1)))
+#  define MSB(v)    (63 - __lzcnt64(v))
+#endif
 void AlignedMalloc(void **, uint64_t, size_t);
 void AlignedRemalloc(void **, uint64_t, size_t);
 void Analyze(void);
 void Annotate(void);
 void AnnotateHeaderHTML(char *, FILE *);
 void AnnotateFooterHTML(FILE *);
-void AnnotatePositionHTML(TREE *RESTRICT, int, FILE *);
+void AnnotatePositionHTML(TREE *, int, FILE *);
 char *AnnotateVtoNAG(int, int, int, int);
 void AnnotateHeaderTeX(FILE *);
 void AnnotateFooterTeX(FILE *);
 void AnnotatePositionTeX(TREE *, int, FILE *);
 uint64_t atoiKMB(char *);
-int Attacks(TREE *RESTRICT, int, int);
-uint64_t Attacked(TREE *RESTRICT, int, uint64_t);
-uint64_t AttacksFrom(TREE *RESTRICT, int, int);
-uint64_t AttacksTo(TREE *RESTRICT, int);
+int Attacks(TREE *, int, int);
+uint64_t Attacked(TREE *, int, uint64_t);
+uint64_t AttacksFrom(TREE *, int, int);
+uint64_t AttacksTo(TREE *, int);
 void AutoTune(int, char **);
 int Bench(int, int);
-int Book(TREE *RESTRICT, int);
+int Book(TREE *, int);
 void BookClusterIn(FILE *, int, BOOK_POSITION *);
 void BookClusterOut(FILE *, int, BOOK_POSITION *);
-int BookIn32(unsigned char *);
-float BookIn32f(unsigned char *);
-uint64_t BookIn64(unsigned char *);
+int BookIn32(uint8_t *);
+float BookIn32f(uint8_t *);
+uint64_t BookIn64(uint8_t *);
 int BookMask(char *);
-unsigned char *BookOut32(int);
-unsigned char *BookOut32f(float);
-unsigned char *BookOut64(uint64_t);
-int BookPonderMove(TREE *RESTRICT, int);
-void Bookup(TREE *RESTRICT, int, char **);
+uint8_t *BookOut32(int);
+uint8_t *BookOut32f(float);
+uint8_t *BookOut64(uint64_t);
+int BookPonderMove(TREE *, int);
+void Bookup(TREE *, int, char **);
 void BookSort(BB_POSITION *, int, int);
-int BookupCompare(const void *, const void *);
+int CDECL BookupCompare(const void *, const void *);
 BB_POSITION BookupNextPosition(int, int);
 int CheckInput(void);
 void ClearHashTableScores(void);
 int ComputeDifficulty(int, int);
-void CopyFromParent(TREE *RESTRICT);
-void CopyToParent(TREE *RESTRICT, TREE *RESTRICT, int);
+void CopyFromParent(TREE *);
+void CopyToParent(TREE *, TREE *, int);
 void CraftyExit(int);
 void DisplayArray(int *, int);
 void DisplayArrayX2(int *, int *, int);
@@ -373,42 +373,42 @@ void DisplayFT(int, int, int);
 char *DisplayHHMM(unsigned);
 char *DisplayHHMMSS(unsigned);
 char *DisplayKMB(uint64_t, int);
-void DisplayFail(TREE *RESTRICT, int, int, int, int, int, int, int);
-char *DisplayPath(TREE *RESTRICT, int, PATH *);
-void DisplayPV(TREE *RESTRICT, int, int, int, PATH *, int);
+void DisplayFail(TREE *, int, int, int, int, int, int, int);
+char *DisplayPath(TREE *, int, PATH *);
+void DisplayPV(TREE *, int, int, int, PATH *, int);
 char *DisplayTime(unsigned);
 char *Display2Times(unsigned);
 char *DisplayTimeKibitz(unsigned);
 void DisplayChessMove(char *, int);
-int Drawn(TREE *RESTRICT, int);
+int Drawn(TREE *, int);
 int  DTZtoWDL(int, int);
 void Edit(void);
-int Evaluate(TREE *RESTRICT, int, int, int, int);
-void EvaluateBishops(TREE *RESTRICT, int);
-void EvaluateCastling(TREE *RESTRICT, int, int);
-int EvaluateDraws(TREE *RESTRICT, int, int, int);
+int Evaluate(TREE *, int, int, int, int);
+void EvaluateBishops(TREE *, int);
+void EvaluateCastling(TREE *, int, int);
+int EvaluateDraws(TREE *, int, int, int);
 int EvaluateHasOpposition(int, int, int);
-void EvaluateKing(TREE *RESTRICT, int, int);
-int EvaluateKingsFile(TREE * RESTRICT, int, int, int);
-void EvaluateKnights(TREE *RESTRICT, int);
-void EvaluateMate(TREE *RESTRICT, int);
-void EvaluateMaterial(TREE *RESTRICT, int);
-void EvaluatePassedPawns(TREE *RESTRICT, int, int);
-void EvaluatePassedPawnRaces(TREE *RESTRICT, int);
-void EvaluatePawns(TREE *RESTRICT, int);
-void EvaluateQueens(TREE *RESTRICT, int);
-void EvaluateRooks(TREE *RESTRICT, int);
-int EvaluateWinningChances(TREE *RESTRICT, int, int);
+void EvaluateKing(TREE *, int, int);
+int EvaluateKingsFile(TREE * , int, int, int);
+void EvaluateKnights(TREE *, int);
+void EvaluateMate(TREE *, int);
+void EvaluateMaterial(TREE *, int);
+void EvaluatePassedPawns(TREE *, int);
+void EvaluatePassedPawnRaces(TREE *, int);
+void EvaluatePawns(TREE *, int);
+void EvaluateQueens(TREE *, int);
+void EvaluateRooks(TREE *, int);
+int EvaluateWinningChances(TREE *, int, int);
 void EVTest(char *);
-int Exclude(TREE *RESTRICT, int, int);
-int FindBlockID(TREE *RESTRICT);
-char *FormatPV(TREE *RESTRICT, int, PATH);
+int Exclude(TREE *, int, int);
+int FindBlockID(TREE *);
+char *FormatPV(TREE *, int, PATH);
 int FTbSetCacheSize(void *, unsigned long);
 int GameOver(int);
-unsigned *GenerateCaptures(TREE *RESTRICT, int, int, unsigned *);
-unsigned *GenerateCheckEvasions(TREE *RESTRICT, int, int, unsigned *);
-unsigned *GenerateChecks(TREE *RESTRICT, int, unsigned *);
-unsigned *GenerateNoncaptures(TREE *RESTRICT, int, int, unsigned *);
+unsigned *GenerateCaptures(TREE *, int, int, unsigned *);
+unsigned *GenerateCheckEvasions(TREE *, int, int, unsigned *);
+unsigned *GenerateChecks(TREE *, int, unsigned *);
+unsigned *GenerateNoncaptures(TREE *, int, int, unsigned *);
 TREE *GetBlock(TREE *, int);
 void Initialize(void);
 void InitializeAttackBoards(void);
@@ -427,72 +427,72 @@ void InitializeLMP(void);
 void InitializeLMR(void);
 void InitializeSMP(void);
 int IInitializeTb(char *);
-int InputMove(TREE *RESTRICT, int, int, int, int, char *);
-int InputMoveICS(TREE *RESTRICT, int, int, int, int, char *);
+int InputMove(TREE *, int, int, int, int, char *);
+int InputMoveICS(TREE *, int, int, int, int, char *);
 uint64_t InterposeSquares(int, int, int);
 void Interrupt(int);
-int InvalidPosition(TREE *RESTRICT);
+int InvalidPosition(TREE *);
 int Iterate(int, int, int);
 int Join(int64_t);
 void Kibitz(int, int, int, int, int, uint64_t, int, int, char *);
-void History(TREE *RESTRICT, int, int, int, int, int*);
+void History(TREE *, int, int, int, int, int*);
 int KingPawnSquare(int, int, int, int);
 int LearnAdjust(int);
 void LearnBook(void);
 int LearnFunction(int, int, int, int);
 void LearnValue(int, int);
-void MakeMove(TREE *RESTRICT, int, int, int);
-void MakeMoveRoot(TREE *RESTRICT, int, int);
-int Mated(TREE *RESTRICT, int, int);
+void MakeMove(TREE *, int, int, int);
+void MakeMoveRoot(TREE *, int, int);
+int Mated(TREE *, int, int);
 int RootMoveEGTB(int);
-int NextMove(TREE *RESTRICT, int, int, int, int);
-int NextRootMove(TREE *RESTRICT, TREE *RESTRICT, int);
+int NextMove(TREE *, int, int, int, int);
+int NextRootMove(TREE *, TREE *, int);
 int NextRootMoveParallel(void);
-void NextSort(TREE *RESTRICT, int);
-int Option(TREE *RESTRICT);
+void NextSort(TREE *, int);
+int Option(TREE *);
 int OptionMatch(char *, char *);
-void OptionPerft(TREE *RESTRICT, int, int, int);
-void Output(TREE *RESTRICT);
-char *OutputMove(TREE *RESTRICT, int, int, int);
+void OptionPerft(TREE *, int, int, int);
+void Output(TREE *);
+char *OutputMove(TREE *, int, int, int);
 int ParseTime(char *);
 void Pass(void);
-int PinnedOnKing(TREE *RESTRICT, int, int);
+int PinnedOnKing(TREE *, int, int);
 int Ponder(int);
 void Print(int, char *, ...);
-int ProbeDTZ(TREE * RESTRICT tree, int ply, int wtm);
-int HashProbe(TREE *RESTRICT, int, int, int, int, int, int*);
-void HashStore(TREE *RESTRICT, int, int, int, int, int, int);
-void HashStorePV(TREE *RESTRICT, int, int);
-int Quiesce(TREE *RESTRICT, int, int, int, int, int);
-int QuiesceEvasions(TREE *RESTRICT, int, int, int, int);
+int ProbeDTZ(TREE *  tree, int ply, int wtm);
+int HashProbe(TREE *, int, int, int, int, int, int*);
+void HashStore(TREE *, int, int, int, int, int, int);
+void HashStorePV(TREE *, int, int);
+int Quiesce(TREE *, int, int, int, int, int);
+int QuiesceEvasions(TREE *, int, int, int, int);
 unsigned Random32(void);
 uint64_t Random64(void);
 int Read(int, char *);
-int ReadChessMove(TREE *RESTRICT, FILE *, int, int);
+int ReadChessMove(TREE *, FILE *, int, int);
 void ReadClear(void);
 unsigned ReadClock(void);
 int ReadPGN(FILE *, int);
-int ReadNextMove(TREE *RESTRICT, char *, int, int);
+int ReadNextMove(TREE *, char *, int, int);
 int ReadParse(char *, char *args[], char *);
 int ReadInput(void);
-int Repeat(TREE *RESTRICT, int);
-int Repeat3x(TREE *RESTRICT);
-void ResignOrDraw(TREE *RESTRICT, int);
+int Repeat(TREE *, int);
+int Repeat3x(TREE *);
+void ResignOrDraw(TREE *, int);
 void RestoreGame(void);
 void RootMoveList(int);
-int Search(TREE *RESTRICT, int, int, int, int, int, int, int);
-int SearchMove(TREE *RESTRICT, int, int, int, int, int, int, int, int, int);
-int SearchMoveList(TREE *RESTRICT, int, int, int, int, int, int *, int, int, int);
-int SearchNull(TREE * RESTRICT, int, int, int, int);
-void Trace(TREE *RESTRICT, int, int, int, int, int, const char *, int, int, int);
+int Search(TREE *, int, int, int, int, int, int, int);
+int SearchMove(TREE *, int, int, int, int, int, int, int, int, int);
+int SearchMoveList(TREE *, int, int, int, int, int, int *, int, int, int);
+int SearchNull(TREE * , int, int, int, int);
+void Trace(TREE *, int, int, int, int, int, const char *, int, int, int);
 void SetBoard(TREE *, int, char **, int);
 void SetChessBitBoards(TREE *);
 void SharedFree(void *address);
-void SortRootMoves(TREE *RESTRICT, int);
-int Split(TREE *RESTRICT);
+void SortRootMoves(TREE *, int);
+int Split(TREE *);
 int StrCnt(char *, char);
-int SEE(TREE *RESTRICT, int, int);
-int SEEO(TREE *RESTRICT, int, int);
+int SEE(TREE *, int, int);
+int SEEO(TREE *, int, int);
 void Test(char *, FILE *, int, int);
 void TestEPD(char *, FILE *, int, int);
 void ThreadAffinity(int);
@@ -500,18 +500,18 @@ void *STDCALL ThreadInit(void *);
 #  if !defined(UNIX)
 void ThreadMalloc(int64_t);
 #  endif
-int ThreadSplit(TREE *RESTRICT, int, int, int, int, int);
-void ThreadStop(TREE *RESTRICT);
-void ThreadTrace(TREE * RESTRICT, int, int);
-int ThreadWait(int, TREE *RESTRICT);
+int ThreadSplit(TREE *, int, int, int, int, int);
+void ThreadStop(TREE *);
+void ThreadTrace(TREE * , int, int);
+int ThreadWait(int, TREE *);
 int Threat(TREE *, int, int, int, int);
 void TimeAdjust(int, int);
-int TimeCheck(TREE *RESTRICT, int);
+int TimeCheck(TREE *, int);
 void TimeSet(int);
-void UnmakeMove(TREE *RESTRICT, int, int, int);
-int ValidMove(TREE *RESTRICT, int, int, int);
-int VerifyMove(TREE *RESTRICT, int, int, int);
-void ValidatePosition(TREE *RESTRICT, int, int, char *);
+void UnmakeMove(TREE *, int, int, int);
+int ValidMove(TREE *, int, int, int);
+int VerifyMove(TREE *, int, int, int);
+void ValidatePosition(TREE *, int, int, char *);
 void WaitForAllThreadsInitialized(void);
 #  if !defined(UNIX)
 extern void *WinMallocInterleaved(size_t, int);

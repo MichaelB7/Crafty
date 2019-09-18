@@ -51,3 +51,4 @@
 #include "test.c"
 #include "time.c"
 #include "validate.c"
+#include "boolean.c"

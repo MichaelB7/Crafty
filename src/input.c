@@ -15,7 +15,7 @@
  *                                                                             *
  *******************************************************************************
  */
-int InputMove(TREE * RESTRICT tree, int ply, int wtm, int silent,
+int InputMove(TREE *tree, int ply, int wtm, int silent,
     int ponder_list, char *text) {
   unsigned moves[220], *mv, *mvp, *goodmove = 0;
   int piece = -1, capture, promote, give_check;
@@ -346,7 +346,7 @@ int InputMove(TREE * RESTRICT tree, int ply, int wtm, int silent,
  *                                                                             *
  *******************************************************************************
  */
-int InputMoveICS(TREE * RESTRICT tree, int ply, int wtm, int silent,
+int InputMoveICS(TREE *tree, int ply, int wtm, int silent,
     int ponder_list, char *text) {
   unsigned moves[220], *mv, *mvp, *goodmove = 0;
   int piece = -1, promote;

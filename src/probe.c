@@ -33,7 +33,7 @@ typedef uint64_t INDEX;
 #  else
 typedef unsigned long INDEX;
 #  endif
-typedef unsigned int squaret;
+typedef uint32_t squaret;
 
 /* Those declarations necessary because Crafty is C, not C++ program */
 #  if defined (_MSC_VER)
@@ -77,7 +77,7 @@ extern int TB_FASTCALL L_TbtProbeTable(int, pcolor, INDEX);
 
 #  define PfnIndCalc PfnIndCalcFun
 #  define FRegistered FRegisteredFun
-int EGTBProbe(TREE * RESTRICT tree, int ply, int wtm, int *score) {
+int EGTBProbe(TREE *tree, int ply, int wtm, int *score) {
   int rgiCounters[10], iTb, fInvert;
   pcolor side;
   squaret rgsqWhite[C_PIECES * 5 + 1], rgsqBlack[C_PIECES * 5 + 1];

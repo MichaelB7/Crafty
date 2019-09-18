@@ -15,7 +15,7 @@
  *                                                                             *
  *******************************************************************************
  */
-#if !defined(INLINEASM)
+#if defined(NO_INTRIN)
 /*
 int MSB(uint64_t arg1) {
   if (arg1 >> 48)

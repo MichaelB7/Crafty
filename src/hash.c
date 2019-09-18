@@ -57,7 +57,7 @@
  *                                                                             *
  *******************************************************************************
  */
-int HashProbe(TREE * RESTRICT tree, int ply, int depth, int side, int alpha,
+int HashProbe(TREE *tree, int ply, int depth, int side, int alpha,
     int beta, int *value) {
   HASH_ENTRY *htable;
   HPATH_ENTRY *ptable;
@@ -235,7 +235,7 @@ int HashProbe(TREE * RESTRICT tree, int ply, int depth, int side, int alpha,
  *                                                                             *
  *******************************************************************************
  */
-void HashStore(TREE * RESTRICT tree, int ply, int depth, int side, int type,
+void HashStore(TREE *tree, int ply, int depth, int side, int type,
     int value, int bestmove) {
   HASH_ENTRY *htable, *replace = 0;
   HPATH_ENTRY *ptable;
@@ -366,7 +366,7 @@ void HashStore(TREE * RESTRICT tree, int ply, int depth, int side, int type,
  *                                                                             *
  *******************************************************************************
  */
-void HashStorePV(TREE * RESTRICT tree, int side, int ply) {
+void HashStorePV(TREE *tree, int side, int ply) {
   HASH_ENTRY *htable, *replace;
   uint64_t temp_hashkey, word1;
   int entry, draft, replace_draft, age;
