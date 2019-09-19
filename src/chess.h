@@ -320,7 +320,7 @@ typedef struct thread {
 #  define MSB(v)    (63 - __builtin_clzll(v))
 #else
 #  define PopCnt(v) __popcnt64(v)
-#  define LSB(v)    (63 - __lzcnt64(v & ~(v-1)))
+#  define LSB(v)    (63 - __lzcnt64(v & -v))
 #  define MSB(v)    (63 - __lzcnt64(v))
 #endif
 void AlignedMalloc(void **, uint64_t, size_t);
