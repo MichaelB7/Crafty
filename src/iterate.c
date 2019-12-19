@@ -46,7 +46,7 @@ int Iterate(int wtm, int search_type, int root_list_done) {
   ROOT_MOVE temp_rm;
   int i, alpha, beta, current_rm = 0, force_print = 0;
   int value = 0, twtm, correct, correct_count, npc, cpl, max;
-  unsigned int idle_time;
+  uint32_t idle_time;
   char buff[32];
 #if (CPUS > 1) && defined(UNIX)
   pthread_t pt;

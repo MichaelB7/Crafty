@@ -22,13 +22,13 @@ char cmd_buffer[4096];
 char *args[512];
 char buffer[4096];
 int line_length = 80;
-unsigned char convert_buff[8];
+uint8_t convert_buff[8];
 int nargs;
 int failhi_delta, faillo_delta;
 int ponder_value;
 int move_actually_played;
 int ponder_move;
-unsigned ponder_moves[256];
+uint32_t ponder_moves[256];
 int num_ponder_moves;
 int book_move;
 int book_learn_eval[LEARN_INTERVAL];
@@ -423,13 +423,13 @@ uint64_t minus8dir[65];
 uint64_t minus9dir[65];
 uint64_t mask_eptest[64];
 POSITION display;
-#if !defined(INLINEASM)
-//unsigned char msb[65536];
-//unsigned char lsb[65536];
+#if defined(NO_INTRIN)
+uint8_t msb[65536];
+uint8_t lsb[65536];
 #endif
-unsigned char msb_8bit[256];
-unsigned char lsb_8bit[256];
-unsigned char pop_cnt_8bit[256];
+uint8_t msb_8bit[256];
+uint8_t lsb_8bit[256];
+uint8_t pop_cnt_8bit[256];
 uint64_t mask_pawn_connected[2][64];
 uint64_t mask_pawn_isolated[64];
 uint64_t mask_passed[2][64];
@@ -564,9 +564,9 @@ int absolute_time_limit;
 int search_time_limit;
 int burp;
 int quit = 0;
-unsigned opponent_start_time, opponent_end_time;
-unsigned program_start_time, program_end_time;
-unsigned start_time, end_time;
+uint32_t opponent_start_time, opponent_end_time;
+uint32_t program_start_time, program_end_time;
+uint32_t start_time, end_time;
 TREE *block[MAX_BLOCKS + 1];
 THREAD thread[CPUS];
 #if (CPUS > 1)
@@ -575,13 +575,13 @@ lock_t lock_smp, lock_io;
   pthread_attr_t attributes;
 #endif
 #endif
-unsigned int hardware_processors;
-unsigned int smp_max_threads = 0;
-unsigned int smp_split_group = 8;       /* max threads per group              */
-unsigned int smp_split_at_root = 1;     /* enable split at root               */
-unsigned int smp_min_split_depth = 5;   /* don't split within 5 plies of tips */
-unsigned int smp_gratuitous_depth = 10; /* gratuitous splits if depth > 10    */
-unsigned int smp_gratuitous_limit = 6;  /* max gratuitous splits / thread     */
+int32_t hardware_processors;
+int32_t smp_max_threads = 0;
+int32_t smp_split_group = 8;       /* max threads per group              */
+int32_t smp_split_at_root = 1;     /* enable split at root               */
+int32_t smp_min_split_depth = 5;   /* don't split within 5 plies of tips */
+int32_t smp_gratuitous_depth = 10; /* gratuitous splits if depth > 10    */
+int32_t smp_gratuitous_limit = 6;  /* max gratuitous splits / thread     */
 int smp_nice = 1;                       /* terminate idle threads             */
 int smp_affinity = 0;                   /* anything >= 0 is enabled           */
 int smp_affinity_increment = 1;         /* if physical cores are zero - N-1 
@@ -607,18 +607,18 @@ struct autotune tune[16] = {
   {10, 16, 2, "min gratuitous split depth", "smpgsd", &smp_gratuitous_depth},
   { 1,  8, 2, "gratuitous split limit", "smpgsl", &smp_gratuitous_limit},
 };
-unsigned parallel_splits;
-unsigned parallel_splits_wasted;
-unsigned parallel_aborts;
-unsigned parallel_joins;
-unsigned busy_percent = 0;
+uint32_t parallel_splits;
+uint32_t parallel_splits_wasted;
+uint32_t parallel_aborts;
+uint32_t parallel_joins;
+uint32_t busy_percent = 0;
 uint64_t game_max_blocks = 0;
 volatile int smp_split = 0;
-volatile int smp_threads = 0;
+volatile uint32_t smp_threads = 0;
 volatile int initialized_threads = 0;
 int crafty_is_white = 0;
-unsigned nodes_between_time_checks = 1000000;
-unsigned nodes_per_second = 1000000;
+uint64_t nodes_between_time_checks = 1000000;
+uint64_t nodes_per_second = 1000000;
 int next_time_check = 100000;
 int transposition_age = 0;
 int thinking = 0;
@@ -642,7 +642,7 @@ int booking = 0;
  ************************************************************
  */
 int display_options = 1 | 2 | 8 | 16 | 32 | 2048;
-unsigned noise_level = 100;
+uint64_t noise_level = 100;
 int noise_block = 0;
 int tc_moves = 60;
 int tc_time = 180000;
@@ -728,7 +728,7 @@ const uint64_t magic_bishop_mask[64] = {
   0x0028440200000000ull, 0x0050080402000000ull, 0x0020100804020000ull,
   0x0040201008040200ull
 };
-const unsigned magic_bishop_shift[64] = {
+const uint32_t magic_bishop_shift[64] = {
   58, 59, 59, 59, 59, 59, 59, 58,
   59, 59, 59, 59, 59, 59, 59, 59,
   59, 59, 57, 57, 57, 57, 59, 59,
@@ -926,7 +926,7 @@ const uint64_t magic_rook_mask[64] = {
   0x6E10101010101000ull, 0x5E20202020202000ull, 0x3E40404040404000ull,
   0x7E80808080808000ull
 };
-const unsigned magic_rook_shift[64] = {
+const uint32_t magic_rook_shift[64] = {
   52, 53, 53, 53, 53, 53, 53, 52,
   53, 54, 54, 54, 54, 54, 54, 53,
   53, 54, 54, 54, 54, 54, 54, 53,

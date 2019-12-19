@@ -101,7 +101,7 @@ void TimeAdjust(int side, int time_used) {
  *                                                                             *
  *******************************************************************************
  */
-int TimeCheck(TREE * RESTRICT tree, int busy) {
+int TimeCheck(TREE *tree, int busy) {
   int time_used;
   int i, ndone;
 

@@ -952,7 +952,7 @@ void InitializeMasks(void) {
 /*
  masks to determine if a pawn has nearby neighbors or not.
  */
-#if !defined(INLINEASM)
+#if defined(NO_INTRIN)
 /*
   msb[0] = 64;
   lsb[0] = 16;

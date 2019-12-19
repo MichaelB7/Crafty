@@ -35,6 +35,8 @@
 #   -DNODES        This enables the sn=x command.  Crafty will search until
 #                  exactly X nodes have been searched, then the search 
 #                  terminates as if time ran out.
+#   -DNO_INTRIN    use this if your processor does not have builtin intrinsic
+#                  instructions for bit operations (PopCnt and such)
 #   -DPOSITIONS    Causes Crafty to emit FEN strings, one per book line, as
 #                  it creates a book.  I use this to create positions to use
 #                  for cluster testing.
@@ -145,7 +147,7 @@ profile:
 	@mkdir prof
 	@touch *.c *.h
 	$(MAKE) -j unix-clang-profile
-	@echo "#!/bin/csh" > runprof
+	@echo "#!/bin/sh" > runprof
 	@echo "./crafty <<EOF" >>runprof
 	@echo "bench" >>runprof
 	@echo "mt=0" >>runprof
@@ -166,7 +168,7 @@ gcc-profile:
 	@mkdir prof
 	@touch *.c *.h
 	$(MAKE) -j unix-gcc-profile
-	@echo "#!/bin/csh" > runprof
+	@echo "#!/bin/sh" > runprof
 	@echo "./crafty <<EOF" >>runprof
 	@echo "bench" >>runprof
 	@echo "mt=0" >>runprof

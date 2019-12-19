@@ -40,7 +40,7 @@
  */
 #define BAD_MOVE  0x02
 #define GOOD_MOVE 0x08
-int Book(TREE * RESTRICT tree, int wtm) {
+int Book(TREE *tree, int wtm) {
   static int book_moves[200];
   static BOOK_POSITION start_moves[200];
   static uint64_t selected_key[200];
@@ -798,7 +798,7 @@ int Book(TREE * RESTRICT tree, int wtm) {
  *                                                                             *
  *******************************************************************************
  */
-int BookPonderMove(TREE * RESTRICT tree, int wtm) {
+int BookPonderMove(TREE *tree, int wtm) {
   uint64_t temp_hash_key, common;
   static unsigned book_moves[200];
   int i, v, key, cluster, n_moves, im, played, tplayed;
@@ -917,7 +917,7 @@ int BookPonderMove(TREE * RESTRICT tree, int wtm) {
  *                                                                             *
  *******************************************************************************
  */
-void Bookup(TREE * RESTRICT tree, int nargs, char **args) {
+void Bookup(TREE *tree, int nargs, char **args) {
   BB_POSITION *bbuffer;
   uint64_t temp_hash_key, common;
   FILE *book_input;
@@ -945,7 +945,7 @@ void Bookup(TREE * RESTRICT tree, int nargs, char **args) {
  ************************************************************
  */
 #if defined(POSITIONS)
-  unsigned int output_pos, output_wtm;
+  uint32_t output_pos, output_wtm;
   FILE *pout = fopen("positions", "w");
 #endif
   if (!strcmp(args[1], "create")) {
@@ -1522,7 +1522,7 @@ BB_POSITION BookupNextPosition(int files, int init) {
   return least;
 }
 
-int BookupCompare(const void *pos1, const void *pos2) {
+int CDECL BookupCompare(const void *pos1, const void *pos2) {
   static uint64_t p1, p2;
 
   memcpy((char *) &p1, ((BB_POSITION *) pos1)->position, 8);

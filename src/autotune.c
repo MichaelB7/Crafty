@@ -44,8 +44,8 @@
  *******************************************************************************
  */
 void AutoTune(int nargs, char *args[]) {
-  unsigned int target_time = 3000, accuracy = 4, atstart, atend;
-  unsigned int time, current, setting[64], times[64], last_time, stageii;
+  uint32_t target_time = 3000, accuracy = 4, atstart, atend;
+  uint32_t time, current, setting[64], times[64], last_time, stageii;
   int benchd, i, v, p, best, bestv, samples;
   FILE *craftyrc = fopen(".craftyrc", "a");
 

@@ -11,7 +11,7 @@
  *                                                                             *
  *******************************************************************************
  */
-void UnmakeMove(TREE * RESTRICT tree, int ply, int side, int move) {
+void UnmakeMove(TREE *tree, int ply, int side, int move) {
   uint64_t bit_move;
   int piece, from, to, captured, promote, enemy = Flip(side);
 

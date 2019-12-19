@@ -170,7 +170,7 @@
  *                                                                             *
  *******************************************************************************
  */
-int Split(TREE * RESTRICT tree) {
+int Split(TREE *tree) {
   TREE *child;
   int tid, tstart, tend;
 
@@ -451,7 +451,7 @@ void *STDCALL ThreadInit(void *t) {
  *                                                                             *
  *******************************************************************************
  */
-int ThreadSplit(TREE * tree, int ply, int depth, int alpha, int o_alpha,
+int ThreadSplit(TREE *tree, int ply, int depth, int alpha, int o_alpha,
     int done) {
   TREE *used;
   int64_t tblocks;
@@ -555,7 +555,7 @@ int ThreadSplit(TREE * tree, int ply, int depth, int alpha, int o_alpha,
  *                                                                             *
  *******************************************************************************
  */
-void ThreadStop(TREE * RESTRICT tree) {
+void ThreadStop(TREE *tree) {
   int proc;
 
   Lock(tree->lock);
@@ -577,7 +577,7 @@ void ThreadStop(TREE * RESTRICT tree) {
  *                                                                             *
  *******************************************************************************
  */
-void ThreadTrace(TREE * RESTRICT tree, int depth, int brief) {
+void ThreadTrace(TREE *tree, int depth, int brief) {
   int proc, i;
 
   Lock(tree->lock);
@@ -654,7 +654,7 @@ void ThreadTrace(TREE * RESTRICT tree, int depth, int brief) {
  *                                                                             *
  *******************************************************************************
  */
-int ThreadWait(int tid, TREE * RESTRICT waiting) {
+int ThreadWait(int tid, TREE *waiting) {
   int value, tstart, tend;
 
 /*
@@ -736,7 +736,7 @@ int ThreadWait(int tid, TREE * RESTRICT waiting) {
  *                                                                             *
  *******************************************************************************
  */
-void CopyFromParent(TREE * RESTRICT child) {
+void CopyFromParent(TREE *child) {
   TREE *parent = child->parent;
   int i, ply;
 
@@ -804,7 +804,7 @@ void CopyFromParent(TREE * RESTRICT child) {
  *                                                                             *
  *******************************************************************************
  */
-void CopyToParent(TREE * RESTRICT parent, TREE * RESTRICT child, int value) {
+void CopyToParent(TREE *parent, TREE *child, int value) {
   int i, ply = parent->ply, which;
 
 /*
@@ -885,7 +885,7 @@ void CopyToParent(TREE * RESTRICT parent, TREE * RESTRICT child, int value) {
  *                                                                             *
  *******************************************************************************
  */
-TREE *GetBlock(TREE * RESTRICT parent, int tid) {
+TREE *GetBlock(TREE *parent, int tid) {
   TREE *child;
   static int warnings = 0;
   int i, unused;
