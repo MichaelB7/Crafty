@@ -13,7 +13,7 @@
  *                                                                             *
  *******************************************************************************
  */
-int NextMove(TREE *tree, int ply, int depth, int side, int in_check) {
+int NextMove(TREE * tree, int ply, int depth, int side, int in_check) {
   unsigned *movep, *bestp;
   int hist, bestval, possible;
 
@@ -388,9 +388,9 @@ int NextMove(TREE *tree, int ply, int depth, int side, int in_check) {
  *                                                                             *
  *******************************************************************************
  */
-int NextRootMove(TREE *tree, TREE *mytree, int side) {
+int NextRootMove(TREE * tree, TREE * mytree, int side) {
   uint64_t total_nodes;
-  int which, i, t;
+  int which, i, t, searched = 0;
 
 /*
  ************************************************************
@@ -421,6 +421,9 @@ int NextRootMove(TREE *tree, TREE *mytree, int side) {
  *                                                          *
  ************************************************************
  */
+  for (i = 0; i < n_root_moves; i++)
+    if (root_moves[i].status & 8)
+      searched++;
   for (which = 0; which < n_root_moves; which++) {
     if (!(root_moves[which].status & 8)) {
       if (search_move) {
@@ -448,7 +451,7 @@ int NextRootMove(TREE *tree, TREE *mytree, int side) {
  ************************************************************
  */
       if (ReadClock() - start_time > noise_level && display_options & 16) {
-        sprintf(mytree->remaining_moves_text, "%d/%d", which + 1,
+        sprintf(mytree->remaining_moves_text, "%d/%d", searched + 1,
             n_root_moves);
         end_time = ReadClock();
         Lock(lock_io);
@@ -565,7 +568,7 @@ int NextRootMoveParallel(void) {
  *                                                                             *
  *******************************************************************************
  */
-int Exclude(TREE *tree, int ply, int move) {
+int Exclude(TREE * tree, int ply, int move) {
   unsigned *i;
 
   if (tree->next_status[ply].exclude > &tree->next_status[ply].done[0])
@@ -586,7 +589,7 @@ int Exclude(TREE *tree, int ply, int move) {
  *                                                                             *
  *******************************************************************************
  */
-void NextSort(TREE *tree, int ply) {
+void NextSort(TREE * tree, int ply) {
   unsigned temp, *movep, *tmovep;
 
 /*

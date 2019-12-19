@@ -556,7 +556,7 @@ void AnnotateFooterHTML(FILE * annotate_out) {
   fprintf(annotate_out, "</BODY>\n");
   fprintf(annotate_out, "</HTML>\n");
 }
-void AnnotatePositionHTML(TREE *tree, int wtm, FILE * annotate_out) {
+void AnnotatePositionHTML(TREE * tree, int wtm, FILE * annotate_out) {
   char filename[32], html_piece;
   char alt[32];
   int rank, file;

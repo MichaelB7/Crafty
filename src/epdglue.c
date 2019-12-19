@@ -374,7 +374,7 @@ static mT EGMapFromHostMove(liT move) {
 
 /*--> EGGetIndexedHostPosition: copy from indexed host position */
 static
-void EGGetIndexedHostPosition(TREE *tree, siT posdex, int active) {
+void EGGetIndexedHostPosition(TREE * tree, siT posdex, int active) {
   sqT sq;
   rbT rb;
   cT actc;

@@ -20,7 +20,7 @@
  *                                                                             *
  *******************************************************************************
  */
-int SEE(TREE *tree, int wtm, int move) {
+int SEE(TREE * tree, int wtm, int move) {
   uint64_t attacks, temp = 0, toccupied = OccupiedSquares;
   uint64_t bsliders =
       Bishops(white) | Bishops(black) | Queens(white) | Queens(black);
@@ -114,7 +114,7 @@ int SEE(TREE *tree, int wtm, int move) {
  *                                                                             *
  *******************************************************************************
  */
-int SEEO(TREE *tree, int wtm, int move) {
+int SEEO(TREE * tree, int wtm, int move) {
   uint64_t attacks, temp = 0, toccupied = OccupiedSquares;
   uint64_t bsliders =
       Bishops(white) | Bishops(black) | Queens(white) | Queens(black);

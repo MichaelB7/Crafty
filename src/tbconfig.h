@@ -23,7 +23,7 @@
  */
 
 #ifndef TBCONFIG_H
-#define TBCONFIG_H
+#  define TBCONFIG_H
 
 /****************************************************************************/
 /* BUILD CONFIG:                                                            */
@@ -34,14 +34,14 @@
  * implementation. To do this supply a macro or function definition
  * here:
  */
-#define TB_CUSTOM_POP_COUNT(x) PopCnt(x)
+#  define TB_CUSTOM_POP_COUNT(x) PopCnt(x)
 
 /*
  * Define TB_CUSTOM_LSB to override the internal lsb
  * implementation. To do this supply a macro or function definition
  * here:
  */
-#define TB_CUSTOM_LSB(x) LSB(x)
+#  define TB_CUSTOM_LSB(x) LSB(x)
 
 /*
  * Define TB_NO_STDINT if you do not want to use <stdint.h> or it is not
@@ -87,11 +87,13 @@
  * constants are representative values but will likely need
  * modification to adapt to an engine's own internal score values.
  */
-#define TB_VALUE_PAWN 100  /* value of pawn in endgame */
-#define TB_VALUE_MATE 32000
-#define TB_VALUE_INFINITE 32767 /* value above all normal score values */
-#define TB_VALUE_DRAW 0
-#define TB_MAX_MATE_PLY 255
+#  define TB_VALUE_PAWN 100
+                          /* value of pawn in endgame */
+#  define TB_VALUE_MATE 32000
+#  define TB_VALUE_INFINITE 32767
+                                /* value above all normal score values */
+#  define TB_VALUE_DRAW 0
+#  define TB_MAX_MATE_PLY 255
 
 /***************************************************************************/
 /* ENGINE INTEGRATION CONFIG                                               */
@@ -109,25 +111,25 @@
  * Define TB_KING_ATTACKS(square) to return the king attacks bitboard for a
  * king at `square'.
  */
-#define TB_KING_ATTACKS(square)          king_attacks[square]
+#  define TB_KING_ATTACKS(square)          king_attacks[square]
 
 /*
  * Define TB_KNIGHT_ATTACKS(square) to return the knight attacks bitboard for
  * a knight at `square'.
  */
-#define TB_KNIGHT_ATTACKS(square)        knight_attacks[square]
+#  define TB_KNIGHT_ATTACKS(square)        knight_attacks[square]
 
 /*
  * Define TB_ROOK_ATTACKS(square, occ) to return the rook attacks bitboard
  * for a rook at `square' assuming the given `occ' occupancy bitboard.
  */
-#define TB_ROOK_ATTACKS(square, occ)     RookAttacks(square, occ)
+#  define TB_ROOK_ATTACKS(square, occ)     RookAttacks(square, occ)
 
 /*
  * Define TB_BISHOP_ATTACKS(square, occ) to return the bishop attacks bitboard
  * for a bishop at `square' assuming the given `occ' occupancy bitboard.
  */
-#define TB_BISHOP_ATTACKS(square, occ)   BishopAttacks(square, occ)
+#  define TB_BISHOP_ATTACKS(square, occ)   BishopAttacks(square, occ)
 
 /*
  * Define TB_QUEEN_ATTACKS(square, occ) to return the queen attacks bitboard
@@ -135,7 +137,7 @@
  * NOTE: If no definition is provided then tbprobe will use:
  *       TB_ROOK_ATTACKS(square, occ) | TB_BISHOP_ATTACKS(square, occ)
  */
-#define TB_QUEEN_ATTACKS(square, occ) QueenAttacks(square, occ)
+#  define TB_QUEEN_ATTACKS(square, occ) QueenAttacks(square, occ)
 
 /*
  * Define TB_PAWN_ATTACKS(square, color) to return the pawn attacks bitboard

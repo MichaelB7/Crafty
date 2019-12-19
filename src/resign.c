@@ -17,7 +17,7 @@
  *                                                                             *
  *******************************************************************************
  */
-void ResignOrDraw(TREE *tree, int value) {
+void ResignOrDraw(TREE * tree, int value) {
   int v, result = 0;
 
 /*

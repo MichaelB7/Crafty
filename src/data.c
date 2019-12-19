@@ -442,7 +442,7 @@ const int OOOsqs[2][3] = {{E8, D8, C8}, {E1, D1, C1}};
 const int OOfrom[2] = {E8, E1};
 const int OOto[2] =   {G8, G1};
 const int OOOto[2] =  {C8, C1};
-#define VERSION      "25.3"
+#define VERSION      "25.4x"
 char version[8] = {VERSION};
 PLAYING_MODE mode = normal_mode;
 int batch_mode = 0;                  /* no asynch reads */
@@ -576,7 +576,7 @@ lock_t lock_smp, lock_io;
 #endif
 #endif
 int32_t hardware_processors;
-int32_t smp_max_threads = 0;
+uint32_t smp_max_threads = 0;
 int32_t smp_split_group = 8;       /* max threads per group              */
 int32_t smp_split_at_root = 1;     /* enable split at root               */
 int32_t smp_min_split_depth = 5;   /* don't split within 5 plies of tips */
@@ -617,9 +617,9 @@ volatile int smp_split = 0;
 volatile uint32_t smp_threads = 0;
 volatile int initialized_threads = 0;
 int crafty_is_white = 0;
-uint64_t nodes_between_time_checks = 1000000;
+int64_t nodes_between_time_checks = 1000000;
 uint64_t nodes_per_second = 1000000;
-int next_time_check = 100000;
+int64_t next_time_check = 100000;
 int transposition_age = 0;
 int thinking = 0;
 int pondering = 0;
@@ -660,8 +660,28 @@ int move_number = 1;
 int moves_out_of_book = 0;
 int first_nonbook_factor = 0;
 int first_nonbook_span = 0;
-#if defined(SKILL)
-int skill = 100;
+#if defined(ELO)
+uint64_t burner[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+/*  following data:  First vector is list of potential Elo values;
+                     Second vector is nps to approximate that Elo;
+                     Third vector is the eval cpu burner count to produce
+                       that NPS as a first guess.  The value chosen from this
+                       vector will be adjusted as the program plays this game
+                       to get the NPS close to the target.
+*/
+const int elo_set[15] =     {    800, 1000,  1200,  1400,    1600,
+                                1800, 2000,  2200,  2400,    2600,
+                                2800, 3000,  3200,  3400,    3600 };
+const int elo_knps[15] =    {     10,   21,    43,    86,     192,
+                                 375,  750,  1500,  3000,    6000,
+                               12000, 24000, 48000, 96000, 192000 };
+const int elo_burnc[15] =   {  80000, 40000, 20000, 10000,   5000,
+                                2500, 1300,   500,    170,      0,
+                                   0,    0,      0,     0,      0 };
+int nps_loop = 0;
+int knps_target = 9999999;
+int elo = 3601;
+int elo_randomize = 0;
 #endif
 int show_book = 0;
 int book_selection_width = 5;

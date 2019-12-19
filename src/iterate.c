@@ -1,8 +1,9 @@
+#include <math.h>
 #include "chess.h"
 #include "data.h"
 #include "epdglue.h"
 #include "tbprobe.h"
-/* last modified 08/13/19 */
+/* last modified 11/02/19 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -387,7 +388,7 @@ int Iterate(int wtm, int search_type, int root_list_done) {
             if ((root_moves[current_rm].status & 2) == 0)
               difficulty = ComputeDifficulty(difficulty, +1);
             root_moves[current_rm].status |= 2;
-            DisplayFail(tree, 1, 5, wtm, end_time - start_time,
+            DisplayFail(tree, 1, wtm, end_time - start_time,
                 root_moves[current_rm].move, value, force_print);
             temp_rm = root_moves[current_rm];
             for (i = current_rm; i > 0; i--)
@@ -431,7 +432,7 @@ int Iterate(int wtm, int search_type, int root_list_done) {
             if ((root_moves[current_rm].status & 1) == 0)
               difficulty = ComputeDifficulty(Max(100, difficulty), -1);
             root_moves[current_rm].status |= 1;
-            DisplayFail(tree, 2, 5, wtm, end_time - start_time,
+            DisplayFail(tree, 2, wtm, end_time - start_time,
                 root_moves[current_rm].move, value, force_print);
           } else
             break;
@@ -531,6 +532,26 @@ int Iterate(int wtm, int search_type, int root_list_done) {
         }
         alpha = Max(-MATE, value - 16);
         beta = Min(MATE, value + 16);
+/*
+ ************************************************************
+ *                                                          *
+ *  Now it is time to see, if we are playing using an Elo   *
+ *  setting, whether the actual NPS is within 1% of the     *
+ *  target NPS needed to produce the specified Elo.         *
+ *                                                          *
+ ************************************************************
+ */
+#if defined(ELO)
+        if (elo < 3600 && nodes_per_second != 1000000) {
+          float error;
+
+          error =
+              ((float) knps_target * 1000.0 -
+              (float) nodes_per_second) / ((float) knps_target * 1000.0);
+          nps_loop -= nps_loop * error;
+          nps_loop = Max(nps_loop + 1, 0);
+        }
+#endif
 /*
  ************************************************************
  *                                                          *

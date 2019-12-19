@@ -1,7 +1,7 @@
 #include "chess.h"
 #include "evaluate.h"
 #include "data.h"
-/* last modified 08/03/16 */
+/* last modified 11/02/19 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -16,7 +16,7 @@
  *                                                                             *
  *******************************************************************************
  */
-int Evaluate(TREE *tree, int ply, int wtm, int alpha, int beta) {
+int Evaluate(TREE * tree, int ply, int wtm, int alpha, int beta) {
   PAWN_HASH_ENTRY *ptable;
   PXOR *pxtable;
   int score, side, can_win = 3, phase, lscore, cutoff;
@@ -24,16 +24,16 @@ int Evaluate(TREE *tree, int ply, int wtm, int alpha, int beta) {
 /*
  *************************************************************
  *                                                           *
- *  First thing we do is if -DSKILL was passed in to the     *
+ *  First thing we do is if -DELO was passed in to the       *
  *  compiler, we burn some time to slow the search down,     *
  *  then we fall into the normal evaluation code.            *
  *                                                           *
  *************************************************************
  */
-#if defined(SKILL)
-  if (skill < 100) {
+#if defined(ELO)
+  if (nps_loop) {
     int i, j;
-    for (i = 0; i < burnc[skill / 10] && !abort_search; i++)
+    for (i = 0; i < nps_loop && !abort_search; i++)
       for (j = 1; j < 10 && !abort_search; j++)
         burner[j - 1] = burner[j - 1] * burner[j];
     if (TimeCheck(tree, 1))
@@ -120,11 +120,11 @@ int Evaluate(TREE *tree, int ply, int wtm, int alpha, int beta) {
         tree->score_eg = tree->score_eg / 16;
       if (tree->score_eg < DrawScore(1) && !(can_win & 1))
         tree->score_eg = tree->score_eg / 16;
-#if defined(SKILL)
-      if (skill < 100)
+#if defined(ELO)
+      if (elo_randomize)
         tree->score_eg =
-            skill * tree->score_eg / 100 + ((100 -
-                skill) * PAWN_VALUE * (uint64_t) Random32() /
+            elo_randomize * tree->score_eg / 100 + ((100 -
+                elo_randomize) * PAWN_VALUE * (uint64_t) Random32() /
             0x100000000ull) / 100;
 #endif
       return (wtm) ? tree->score_eg : -tree->score_eg;
@@ -303,12 +303,12 @@ int Evaluate(TREE *tree, int ply, int wtm, int alpha, int beta) {
  */
   score = ((tree->score_mg * phase) + (tree->score_eg * (62 - phase))) / 62;
   score = EvaluateDraws(tree, ply, can_win, score);
-#if defined(SKILL)
-  if (skill < 100)
+#if defined(ELO)
+  if (elo_randomize)
     score =
-        skill * score / 100 + ((100 -
-            skill) * PAWN_VALUE * (uint64_t) Random32() / 0x100000000ull) /
-        100;
+        elo_randomize * score / 100 + ((100 -
+            elo_randomize) * PAWN_VALUE * (uint64_t) Random32() /
+        0x100000000ull) / 100;
 #endif
   return (wtm) ? score : -score;
 }
@@ -321,7 +321,7 @@ int Evaluate(TREE *tree, int ply, int wtm, int alpha, int beta) {
  *                                                                             *
  *******************************************************************************
  */
-void EvaluateBishops(TREE *tree, int side) {
+void EvaluateBishops(TREE * tree, int side) {
   uint64_t temp, moves;
   int square, special, i, mobility;
   int score_eg = 0, score_mg = 0, enemy = Flip(side), tpawns;
@@ -450,7 +450,7 @@ void EvaluateBishops(TREE *tree, int side) {
  *                                                                             *
  *******************************************************************************
  */
-void EvaluateCastling(TREE *tree, int ply, int side) {
+void EvaluateCastling(TREE * tree, int ply, int side) {
   int enemy = Flip(side), oq, score_mg = 0;;
 
 /*
@@ -490,7 +490,7 @@ void EvaluateCastling(TREE *tree, int ply, int side) {
  *                                                                             *
  *******************************************************************************
  */
-int EvaluateDraws(TREE *tree, int ply, int can_win, int score) {
+int EvaluateDraws(TREE * tree, int ply, int can_win, int score) {
 /*
  ************************************************************
  *                                                          *
@@ -616,7 +616,7 @@ int EvaluateHasOpposition(int on_move, int king, int enemy_king) {
  *                                                                             *
  *******************************************************************************
  */
-void EvaluateKing(TREE *tree, int ply, int side) {
+void EvaluateKing(TREE * tree, int ply, int side) {
   int score_eg = 0, score_mg = 0, defects;
   int ksq = KingSQ(side), enemy = Flip(side);
 
@@ -695,7 +695,7 @@ void EvaluateKing(TREE *tree, int ply, int side) {
  *                                                                             *
  *******************************************************************************
  */
-int EvaluateKingsFile(TREE *tree, int side, int first, int last) {
+int EvaluateKingsFile(TREE * tree, int side, int first, int last) {
   int defects = 0, file, enemy = Flip(side);
 
   for (file = first; file <= last; file++)
@@ -727,7 +727,7 @@ int EvaluateKingsFile(TREE *tree, int side, int first, int last) {
  *                                                                             *
  *******************************************************************************
  */
-void EvaluateKnights(TREE *tree, int side) {
+void EvaluateKnights(TREE * tree, int side) {
   uint64_t temp;
   int square, special, i, score_eg = 0, score_mg = 0, enemy = Flip(side);
 
@@ -792,7 +792,7 @@ void EvaluateKnights(TREE *tree, int side) {
  *                                                                             *
  *******************************************************************************
  */
-void EvaluateMate(TREE *tree, int side) {
+void EvaluateMate(TREE * tree, int side) {
   int mate_score = 0, enemy = Flip(side);
 
 /*
@@ -844,7 +844,7 @@ void EvaluateMate(TREE *tree, int side) {
  *                                                                             *
  *******************************************************************************
  */
-void EvaluateMaterial(TREE *tree, int wtm) {
+void EvaluateMaterial(TREE * tree, int wtm) {
   int score_mg, score_eg, majors, minors;
 
 /*
@@ -913,7 +913,7 @@ void EvaluateMaterial(TREE *tree, int wtm) {
  *                                                                             *
  *******************************************************************************
  */
-void EvaluatePassedPawns(TREE *tree, int side) {
+void EvaluatePassedPawns(TREE * tree, int side) {
   uint64_t behind, forward, backward, attacked, defended, thispawn;
   int file, square, score, score_mg = 0, score_eg = 0, next_sq;
   int pawns, rank, mg_base, eg_base, bonus, enemy = Flip(side);
@@ -1078,7 +1078,7 @@ void EvaluatePassedPawns(TREE *tree, int side) {
  *                                                                             *
  *******************************************************************************
  */
-void EvaluatePassedPawnRaces(TREE *tree, int wtm) {
+void EvaluatePassedPawnRaces(TREE * tree, int wtm) {
   uint64_t pawns, thispawn;
   int file, square, queen_distance, pawnsq, passed, side, enemy;
   int queener[2] = { 8, 8 };
@@ -1242,7 +1242,7 @@ void EvaluatePassedPawnRaces(TREE *tree, int wtm) {
  *                                                                             *
  *******************************************************************************
  */
-void EvaluatePawns(TREE *tree, int side) {
+void EvaluatePawns(TREE * tree, int side) {
   uint64_t pawns, attackers, defenders;
   uint64_t doubled, supported, connected, passed, backward;
   int square, file, rank, score_eg = 0, score_mg = 0, enemy = Flip(side);
@@ -1440,7 +1440,7 @@ void EvaluatePawns(TREE *tree, int side) {
  *                                                                             *
  *******************************************************************************
  */
-void EvaluateQueens(TREE *tree, int side) {
+void EvaluateQueens(TREE * tree, int side) {
   uint64_t temp;
   int square, i, score_mg = 0, score_eg = 0, enemy = Flip(side);
 
@@ -1491,7 +1491,7 @@ void EvaluateQueens(TREE *tree, int side) {
  *                                                                             *
  *******************************************************************************
  */
-void EvaluateRooks(TREE *tree, int side) {
+void EvaluateRooks(TREE * tree, int side) {
   uint64_t temp, moves;
   int square, rank, file, i, mobility, score_mg = 0, score_eg = 0;
   int enemy = Flip(side);
@@ -1616,7 +1616,7 @@ void EvaluateRooks(TREE *tree, int side) {
  *                                                                             *
  *******************************************************************************
  */
-int EvaluateWinningChances(TREE *tree, int side, int wtm) {
+int EvaluateWinningChances(TREE * tree, int side, int wtm) {
   int square, ekd, promote, majors, minors, enemy = Flip(side);
 
   if (!Pawns(side)) {

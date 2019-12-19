@@ -67,7 +67,7 @@ void Initialize() {
         book_path);
   if (book_file) {
     int maj_min;
-    fseek(book_file, - (long) sizeof(int), SEEK_END);
+    fseek(book_file, -(long) sizeof(int), SEEK_END);
     v = fread(&maj_min, 4, 1, book_file);
     if (v <= 0)
       perror("Initialize() fread error: ");
@@ -953,7 +953,6 @@ void InitializeMasks(void) {
  masks to determine if a pawn has nearby neighbors or not.
  */
 #if defined(NO_INTRIN)
-/*
   msb[0] = 64;
   lsb[0] = 16;
   for (i = 1; i < 65536; i++) {
@@ -965,7 +964,6 @@ void InitializeMasks(void) {
           lsb[i] = j;
       }
   }
-*/
 #endif
   msb_8bit[0] = 8;
   lsb_8bit[0] = 8;

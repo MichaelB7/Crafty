@@ -13,7 +13,7 @@
  *                                                                             *
  *******************************************************************************
  */
-char *OutputMove(TREE *tree, int ply, int wtm, int move) {
+char *OutputMove(TREE * tree, int ply, int wtm, int move) {
   static char text_move[10], new_text[10];
   unsigned *mvp;
   char *text = text_move;

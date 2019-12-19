@@ -21,7 +21,7 @@
  *                                                                             *
  *******************************************************************************
  */
-void ValidatePosition(TREE *tree, int ply, int move, char *caller) {
+void ValidatePosition(TREE * tree, int ply, int move, char *caller) {
   uint64_t temp, temp1, temp_occ;
   uint64_t temp_occx;
   int i, square, error = 0;

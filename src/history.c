@@ -21,7 +21,7 @@
  *                                                                             *
  *******************************************************************************
  */
-void History(TREE *tree, int ply, int depth, int side, int move,
+void History(TREE * tree, int ply, int depth, int side, int move,
     int searched[]) {
   int i, index, mindex;
 /*

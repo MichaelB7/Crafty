@@ -314,14 +314,20 @@ typedef struct thread {
 #  define LEGAL                        1
 #  define IN_WINDOW                    2
 #  define FAIL_HIGH                    3
-#if defined(UNIX)
-#  define PopCnt(v) __builtin_popcountll(v)
-#  define LSB(v)    __builtin_ctzll(v)
-#  define MSB(v)    (63 - __builtin_clzll(v))
+#if !defined(NO_INTRIN)
+#  if defined(UNIX)
+#    define PopCnt(v) __builtin_popcountll(v)
+#    define LSB(v)    __builtin_ctzll(v)
+#    define MSB(v)    (63 - __builtin_clzll(v))
+#  else
+#    define PopCnt(v) __popcnt64(v)
+#    define LSB(v)    (63 - __lzcnt64(v & -v))
+#    define MSB(v)    (63 - __lzcnt64(v))
+#  endif
 #else
-#  define PopCnt(v) __popcnt64(v)
-#  define LSB(v)    (63 - __lzcnt64(v & -v))
-#  define MSB(v)    (63 - __lzcnt64(v))
+  int LSB(uint64_t);
+  int MSB(uint64_t);
+  int PopCnt(uint64_t);
 #endif
 void AlignedMalloc(void **, uint64_t, size_t);
 void AlignedRemalloc(void **, uint64_t, size_t);
@@ -373,7 +379,7 @@ void DisplayFT(int, int, int);
 char *DisplayHHMM(unsigned);
 char *DisplayHHMMSS(unsigned);
 char *DisplayKMB(uint64_t, int);
-void DisplayFail(TREE *, int, int, int, int, int, int, int);
+void DisplayFail(TREE *, int, int, int, int, int, int);
 char *DisplayPath(TREE *, int, PATH *);
 void DisplayPV(TREE *, int, int, int, PATH *, int);
 char *DisplayTime(unsigned);
@@ -430,7 +436,7 @@ int IInitializeTb(char *);
 int InputMove(TREE *, int, int, int, int, char *);
 int InputMoveICS(TREE *, int, int, int, int, char *);
 uint64_t InterposeSquares(int, int, int);
-void Interrupt(int);
+void Interrupt(void);
 int InvalidPosition(TREE *);
 int Iterate(int, int, int);
 int Join(int64_t);

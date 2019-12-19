@@ -301,8 +301,9 @@ int RootMoveEGTB(int wtm) {
         }
         piece = abs(PcOnSq(TB_GET_FROM(tb_result)));
         captured = abs(PcOnSq(TB_GET_TO(tb_result)));
-        if TB_GET_EP(tb_result)
-          captured = 1;
+        if TB_GET_EP
+          (tb_result)
+              captured = 1;
         cmove =
             TB_GET_FROM(tb_result) | (TB_GET_TO(tb_result) << 6) | (piece <<
             12) | (captured << 15);

@@ -9,7 +9,7 @@
 #if defined(SYZYGY)
 #  include "tbprobe.h"
 #endif
-/* last modified 08/03/16 */
+/* last modified 11/02/19 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -3511,7 +3511,7 @@
  *           futility is on by default and should not be removed.  All of the  *
  *           search() code has been cleaned up and streamlined a bit for more  *
  *           clarity when reading the code.  Nasty bug in EvaluatePawns() that *
- *           unfortunattely used the king squares to make a decision dealing   *
+ *           unfortunately used the king squares to make a decision dealing    *
  *           with outside passed pawns, but the hash signature for pawns does  *
  *           not include king position.  This code was deemed unnecessary and  *
  *           was summarily removed (not summarily executed, it has had that    *
@@ -4255,6 +4255,34 @@
  *           probe code).  This caused a new bug once the tbprobe.c code was   *
  *           updated.  That is now fixed also, leaving everything working as   *
  *           it should, so far as I know through a lot of testing.             *
+ *                                                                             *
+ *    25.4   Change to the "display moves" command.  Crafty displays two       *
+ *           numbers (m/n) where it is currently searching move "m" out of "n" *
+ *           to let the operator know how a particular iterating is            *
+ *           progressing.  Only problem was, on a fail high, it would revert   *
+ *           back to "1/n" since the fail high move was moved to the top of    *
+ *           the move list.  It now counts the total moves searched and uses   *
+ *           that for the "m" value which gives a more correct idea of how     *
+ *           many moves have been searched, and how many are remaining.        *
+ *           New command "elo" replaced the old skill command.  It behaves in  *
+ *           similar way, in that it affects search speed and evaluation       *
+ *           randomness, but in a different way.  This version of Crafty       *
+ *           assumes that an Elo of 2600 is produced at a speed of 6M nodes    *
+ *           per second and zero evaluation randomness.  If you set the Elo    *
+ *           lower or higher, Crafty will (a) dynamically adjust the NPS (if   *
+ *           hardware is capable of upper ranges) to weaken the search, and it *
+ *           will start to ramp up randomness for any Elo below 2600.  The     *
+ *           current range is between 800 and 3600, where 3600 plays at max    *
+ *           possible NPS and zero randomness.  At Elo settings below 3600,    *
+ *           the search is slowed to get it down to 6M by the time Elo drops   *
+ *           to 2600.  Below that Elo, both NPS and randomness are adjusted.   *
+ *           In an attempt to neutralize the effect of faster hardware, the    *
+ *           NPS is dynamically adjusted while searching to keep it where it   *
+ *           should be (approximately) for the chosen Elo.  This may need some *
+ *           additional calibration, as testing below 2000 is pretty hard.  I  *
+ *           had to hack a couple of open-source programs (slowing them down   *
+ *           only) to produce opponents down in that range.  This will likely  *
+ *           be updated over time.                                             *
  *                                                                             *
  *******************************************************************************
  */

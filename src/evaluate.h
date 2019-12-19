@@ -337,16 +337,6 @@ const int wtm_bonus[2]              = { 5, 8 };
 /*
  ************************************************************
  *                                                          *
- *  Skill command constants (should not be changed)         *
- *                                                          *
- ************************************************************
- */
-uint64_t burner[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-const int burnc[10] = {128000, 64000, 32400, 15200, 7600,
-                         3800,  1960,  1040,   480,  140};
-/*
- ************************************************************
- *                                                          *
  *  Mop-up scoring terms.  These are used in pawnless end-  *
  *  games to mate the weaker side.  There is a special PST  *
  *  B+N vs lone king to make it easier to win with very     *

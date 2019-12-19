@@ -169,7 +169,7 @@ extern pthread_attr_t attributes;
 #  endif
 #endif
 extern int32_t hardware_processors;
-extern int32_t smp_max_threads;
+extern uint32_t smp_max_threads;
 extern int32_t smp_split_group;
 extern int32_t smp_split_at_root;
 extern int32_t smp_min_split_depth;
@@ -192,9 +192,9 @@ extern volatile int smp_split;
 extern volatile uint32_t smp_threads;
 extern volatile int initialized_threads;
 extern int crafty_is_white;
-extern uint64_t nodes_between_time_checks;
+extern int64_t nodes_between_time_checks;
 extern uint64_t nodes_per_second;
-extern int next_time_check;
+extern int64_t next_time_check;
 extern int transposition_age;
 extern int thinking;
 extern int pondering;
@@ -219,8 +219,15 @@ extern int move_number;
 extern int moves_out_of_book;
 extern int first_nonbook_factor;
 extern int first_nonbook_span;
-#if defined(SKILL)
-extern int skill;
+#if defined(ELO)
+extern const int elo_set[15];
+extern const int elo_knps[15];
+extern const int elo_burnc[15];
+extern uint64_t burner[10];
+extern int nps_loop;
+extern int knps_target;
+extern int elo;
+extern int elo_randomize;
 #endif
 extern int book_learn_eval[LEARN_INTERVAL];
 extern int book_learn_depth[LEARN_INTERVAL];

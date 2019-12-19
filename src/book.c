@@ -40,7 +40,7 @@
  */
 #define BAD_MOVE  0x02
 #define GOOD_MOVE 0x08
-int Book(TREE *tree, int wtm) {
+int Book(TREE * tree, int wtm) {
   static int book_moves[200];
   static BOOK_POSITION start_moves[200];
   static uint64_t selected_key[200];
@@ -798,7 +798,7 @@ int Book(TREE *tree, int wtm) {
  *                                                                             *
  *******************************************************************************
  */
-int BookPonderMove(TREE *tree, int wtm) {
+int BookPonderMove(TREE * tree, int wtm) {
   uint64_t temp_hash_key, common;
   static unsigned book_moves[200];
   int i, v, key, cluster, n_moves, im, played, tplayed;
@@ -917,7 +917,7 @@ int BookPonderMove(TREE *tree, int wtm) {
  *                                                                             *
  *******************************************************************************
  */
-void Bookup(TREE *tree, int nargs, char **args) {
+void Bookup(TREE * tree, int nargs, char **args) {
   BB_POSITION *bbuffer;
   uint64_t temp_hash_key, common;
   FILE *book_input;
@@ -925,8 +925,7 @@ void Bookup(TREE *tree, int nargs, char **args) {
   static char schar[2] = { "." };
   int result = 0, played, i, mask_word, total_moves;
   int move, move_num, wtm, book_positions, major, minor;
-  int cluster, max_cluster, ignored = 0, ignored_mp = 0, ignored_lose =
-      0;
+  int cluster, max_cluster, ignored = 0, ignored_mp = 0, ignored_lose = 0;
   int errors, data_read;
   int start_elapsed_time, ply, max_ply = 256;
   int stat, files = 0, buffered = 0, min_played = 0, games_parsed = 0;
@@ -1375,8 +1374,7 @@ void Bookup(TREE *tree, int nargs, char **args) {
         games_parsed);
     Print(4095, "found %d errors during parsing.\n", errors);
     Print(4095, "ignored %d moves (maxply=%d).\n", ignored, max_ply);
-    Print(4095, "ignored %d moves (minplayed=%d).\n", ignored_mp,
-        min_played);
+    Print(4095, "ignored %d moves (minplayed=%d).\n", ignored_mp, min_played);
     Print(4095, "ignored %d moves (win/lose=%.1f%%).\n", ignored_lose,
         wl_percent * 100);
     Print(4095, "book contains %d unique positions.\n", book_positions);

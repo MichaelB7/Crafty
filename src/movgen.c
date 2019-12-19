@@ -13,8 +13,7 @@
  *                                                                             *
  *******************************************************************************
  */
-unsigned *GenerateCaptures(TREE *tree, int ply, int side,
-    unsigned *move) {
+unsigned *GenerateCaptures(TREE * tree, int ply, int side, unsigned *move) {
   uint64_t target, piecebd, moves, promotions, pcapturesl, pcapturesr;
   int from, to, temp, common, enemy = Flip(side);
 
@@ -160,7 +159,7 @@ unsigned *GenerateCaptures(TREE *tree, int ply, int side,
  *                                                                             *
  *******************************************************************************
  */
-unsigned *GenerateChecks(TREE *tree, int side, unsigned *move) {
+unsigned *GenerateChecks(TREE * tree, int side, unsigned *move) {
   uint64_t temp_target, target, piecebd, moves;
   uint64_t padvances1, blockers, checkers;
   int from, to, promote, temp, enemy = Flip(side);
@@ -438,7 +437,7 @@ unsigned *GenerateChecks(TREE *tree, int side, unsigned *move) {
  *                                                                             *
  *******************************************************************************
  */
-unsigned *GenerateCheckEvasions(TREE *tree, int ply, int side,
+unsigned *GenerateCheckEvasions(TREE * tree, int ply, int side,
     unsigned *move) {
   uint64_t target, targetc, targetp, piecebd, moves, empty, checksqs;
   uint64_t padvances1, padvances2, pcapturesl, pcapturesr, padvances1_all;
@@ -675,8 +674,7 @@ unsigned *GenerateCheckEvasions(TREE *tree, int ply, int side,
  *                                                                             *
  *******************************************************************************
  */
-unsigned *GenerateNoncaptures(TREE *tree, int ply, int side,
-    unsigned *move) {
+unsigned *GenerateNoncaptures(TREE * tree, int ply, int side, unsigned *move) {
   uint64_t target, piecebd, moves;
   uint64_t padvances1, padvances2, pcapturesl, pcapturesr;
   int from, to, temp, common, enemy = Flip(side);
@@ -852,7 +850,7 @@ unsigned *GenerateNoncaptures(TREE *tree, int ply, int side,
  *                                                                             *
  *******************************************************************************
  */
-int PinnedOnKing(TREE *tree, int side, int square) {
+int PinnedOnKing(TREE * tree, int side, int square) {
   int ray, enemy = Flip(side);
 
 /*

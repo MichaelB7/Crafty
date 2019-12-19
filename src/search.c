@@ -15,8 +15,8 @@
  *                                                                             *
  *******************************************************************************
  */
-int Search(TREE *tree, int ply, int depth, int wtm, int alpha,
-    int beta, int in_check, int do_null) {
+int Search(TREE * tree, int ply, int depth, int wtm, int alpha, int beta,
+    int in_check, int do_null) {
   int repeat = 0, value = 0, pv_node = alpha != beta - 1, n_depth;
   int searched[256];
 
@@ -51,7 +51,7 @@ int Search(TREE *tree, int ply, int depth, int wtm, int alpha,
         return 0;
       }
       if (CheckInput()) {
-        Interrupt(ply);
+        Interrupt();
         if (abort_search)
           return 0;
       }
@@ -376,8 +376,8 @@ int Search(TREE *tree, int ply, int depth, int wtm, int alpha,
  *                                                                             *
  *******************************************************************************
  */
-int SearchMoveList(TREE *tree, int ply, int depth, int wtm,
-    int alpha, int beta, int searched[], int in_check, int repeat, int smode) {
+int SearchMoveList(TREE * tree, int ply, int depth, int wtm, int alpha,
+    int beta, int searched[], int in_check, int repeat, int smode) {
   TREE *current;
   int extend, reduce, check, original_alpha = alpha, t_beta;
   int i, j, value = 0, pv_node = alpha != beta - 1, search_result, order;
@@ -930,7 +930,7 @@ int SearchMoveList(TREE *tree, int ply, int depth, int wtm,
  *                                                                             *
  *******************************************************************************
  */
-int SearchMove(TREE *tree, int ply, int depth, int wtm, int alpha,
+int SearchMove(TREE * tree, int ply, int depth, int wtm, int alpha,
     int t_beta, int beta, int extend, int reduce, int check) {
   int value;
 /*
