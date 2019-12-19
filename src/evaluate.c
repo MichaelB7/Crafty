@@ -1,7 +1,7 @@
 #include "chess.h"
 #include "evaluate.h"
 #include "data.h"
-/* last modified 11/02/19 */
+/* last modified 11/10/19 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -122,10 +122,9 @@ int Evaluate(TREE * tree, int ply, int wtm, int alpha, int beta) {
         tree->score_eg = tree->score_eg / 16;
 #if defined(ELO)
       if (elo_randomize)
-        tree->score_eg =
+        score =
             elo_randomize * tree->score_eg / 100 + ((100 -
-                elo_randomize) * PAWN_VALUE * (uint64_t) Random32() /
-            0x100000000ull) / 100;
+                elo_randomize) * PAWN_VALUE * (Random32() % 100)) / 10000;
 #endif
       return (wtm) ? tree->score_eg : -tree->score_eg;
     }
@@ -307,8 +306,7 @@ int Evaluate(TREE * tree, int ply, int wtm, int alpha, int beta) {
   if (elo_randomize)
     score =
         elo_randomize * score / 100 + ((100 -
-            elo_randomize) * PAWN_VALUE * (uint64_t) Random32() /
-        0x100000000ull) / 100;
+            elo_randomize) * PAWN_VALUE * (Random32() % 100)) / 10000;
 #endif
   return (wtm) ? score : -score;
 }

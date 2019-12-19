@@ -86,7 +86,7 @@ quick:
 unix-gcc:
 	$(MAKE) -j target=UNIX \
 		CC=gcc \
-		opt='-DSYZYGY -DTEST -DCPUS=12' \
+		opt='-DSYZYGY -DTEST -DCPUS=12 -DELO' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-use \
 		-mpopcnt -fprofile-correction -pthread' \
 		LDFLAGS='$(LDFLAGS) -fprofile-use -pthread -lstdc++' \
@@ -95,7 +95,7 @@ unix-gcc:
 unix-gcc-profile:
 	$(MAKE) -j target=UNIX \
 		CC=gcc \
-		opt='-DSYZYGY -DTEST -DCPUS=12' \
+		opt='-DSYZYGY -DTEST -DCPUS=12 -DELO' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-arcs \
 		-mpopcnt -pthread' \
 		LDFLAGS='$(LDFLAGS) -fprofile-arcs -pthread -lstdc++ ' \

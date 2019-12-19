@@ -35,15 +35,17 @@
 #   -DNODES        This enables the sn=x command.  Crafty will search until
 #                  exactly X nodes have been searched, then the search 
 #                  terminates as if time ran out.
+#   -DELO          Enables the "skill" command which allows you to arbitrarily
+#                  lower Crafty's playing skill so it does not seem so
 #   -DNO_INTRIN    use this if your processor does not have builtin intrinsic
-#                  instructions for bit operations (PopCnt and such)
+#                  instructions for bit operations (PopCnt and such).  This 
+#                  will cost some speed by not using the hardware instructions
+#                  for these operations that are much faster.
 #   -DPOSITIONS    Causes Crafty to emit FEN strings, one per book line, as
 #                  it creates a book.  I use this to create positions to use
 #                  for cluster testing.
 #   -DRCDIR        Path to the directory where we look for the .craftyrc or
 #                  crafty.rc (windows) file.
-#   -DSKILL        Enables the "skill" command which allows you to arbitrarily
-#                  lower Crafty's playing skill so it does not seem so
 #                  invincible to non-GM-level players.
 #   -DSYZYGY       This enables syzygy endgame tables (both WDL and DTC)
 #   -DTBDIR        Path to the directory where the endgame tablebase files
@@ -105,7 +107,7 @@ unix-clang:
 	@/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-profdata merge -output=crafty.profdata *.profraw
 	$(MAKE) -j target=UNIX \
 		CC=clang \
-		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		opt='-DELO -DSYZYGY -DTEST -DCPUS=4' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 \
 			-mpopcnt -fprofile-instr-use=crafty.profdata' \
 		LDFLAGS='$(LDFLAGS) -fprofile-use -lstdc++' \
@@ -114,7 +116,7 @@ unix-clang:
 unix-clang-profile:
 	$(MAKE) -j target=UNIX \
 		CC=clang \
-		opt='-DSYZYGY -DTEST -DCPUS=4' \
+		opt='-DELO -DSYZYGY -DTEST -DCPUS=4' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 \
 			-mpopcnt -fprofile-instr-generate' \
 		LDFLAGS='$(LDFLAGS) -fprofile-instr-generate -lstdc++ ' \

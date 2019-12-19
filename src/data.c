@@ -442,7 +442,7 @@ const int OOOsqs[2][3] = {{E8, D8, C8}, {E1, D1, C1}};
 const int OOfrom[2] = {E8, E1};
 const int OOto[2] =   {G8, G1};
 const int OOOto[2] =  {C8, C1};
-#define VERSION      "25.4x"
+#define VERSION      "25.4y"
 char version[8] = {VERSION};
 PLAYING_MODE mode = normal_mode;
 int batch_mode = 0;                  /* no asynch reads */
@@ -665,19 +665,26 @@ uint64_t burner[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 /*  following data:  First vector is list of potential Elo values;
                      Second vector is nps to approximate that Elo;
                      Third vector is the eval cpu burner count to produce
-                       that NPS as a first guess.  The value chosen from this
-                       vector will be adjusted as the program plays this game
-                       to get the NPS close to the target.
+                     that NPS as a first guess.  The value chosen from this
+                     vector will be adjusted as the program plays this game
+                     to get the NPS close to the target, so it just needs to
+                     be reasonable.  Crafty will tune it very accurately once
+                     it starts to search.  If set too large, the first move
+                     might be very weak, if set too low, the first move might
+                     be stronger than intended.  The default values will work
+                     well.  As a note, an NPS of 6M (6000 knodes below) is
+                     guestimated as playing at 2800.  That might change as 
+                     more data is gathered.
 */
-const int elo_set[15] =     {    800, 1000,  1200,  1400,    1600,
-                                1800, 2000,  2200,  2400,    2600,
-                                2800, 3000,  3200,  3400,    3600 };
-const int elo_knps[15] =    {     10,   21,    43,    86,     192,
-                                 375,  750,  1500,  3000,    6000,
-                               12000, 24000, 48000, 96000, 192000 };
-const int elo_burnc[15] =   {  80000, 40000, 20000, 10000,   5000,
-                                2500, 1300,   500,    170,      0,
-                                   0,    0,      0,     0,      0 };
+const int elo_set[15] =     {    800,   1000,   1200,   1400,   1600,
+                                1800,   2000,   2200,   2400,   2600,
+                                2800,   3000,   3200,   3400,   3600 };
+const int elo_knps[15] =    {      1,      1,      2,      4,      8,
+                                  12,     25,     45,    150,    750,   
+                                6000,  18000,  54000, 150000, 300000 };
+const int elo_burnc[15] =   {   8000,   8000,   8000,   8000,   8000,
+                                8000,   8000,   4000,   2000,   1000,
+                                   0,      0,      0,      0,      0 };
 int nps_loop = 0;
 int knps_target = 9999999;
 int elo = 3601;
@@ -957,8 +964,8 @@ const uint32_t magic_rook_shift[64] = {
   53, 54, 54, 53, 53, 53, 53, 53
 };
 const uint64_t mobility_mask_b[4] = {
-  0xFF818181818181FFull, 0x007E424242427E00ull,
-  0x00003C24243C0000ull, 0x0000001818000000ull
+  0xFFFFFFFFFFFFFFFFull, 0x0000000000000000ull,
+  0x0000000000000000ull, 0x0000000000000000ull
 };
 const uint64_t mobility_mask_r[4] = {
   0x8181818181818181ull, 0x4242424242424242ull,

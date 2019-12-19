@@ -3,7 +3,7 @@
 #include "data.h"
 #include "epdglue.h"
 #include "tbprobe.h"
-/* last modified 11/02/19 */
+/* last modified 11/10/19 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -47,6 +47,7 @@ int Iterate(int wtm, int search_type, int root_list_done) {
   ROOT_MOVE temp_rm;
   int i, alpha, beta, current_rm = 0, force_print = 0;
   int value = 0, twtm, correct, correct_count, npc, cpl, max;
+  static int adjusted = 0;
   uint32_t idle_time;
   char buff[32];
 #if (CPUS > 1) && defined(UNIX)
@@ -542,14 +543,21 @@ int Iterate(int wtm, int search_type, int root_list_done) {
  ************************************************************
  */
 #if defined(ELO)
-        if (elo < 3600 && nodes_per_second != 1000000) {
+        if (elo > 3600 || (knps_target * 1000 > 2 * nodes_per_second &&
+            nps_loop <= 4 && ++adjusted > 100))
+          nps_loop = 0;
+        else if (nodes_per_second != 1000000) {
           float error;
 
           error =
               ((float) knps_target * 1000.0 -
               (float) nodes_per_second) / ((float) knps_target * 1000.0);
           nps_loop -= nps_loop * error;
-          nps_loop = Max(nps_loop + 1, 0);
+          nps_loop = Max(nps_loop + 1, 4);
+#  if defined(DEBUG)
+          Print(32, "nps_loop=%d  nps=%llu  knps_target=%d\n", nps_loop,
+              nodes_per_second, knps_target);
+#  endif
         }
 #endif
 /*

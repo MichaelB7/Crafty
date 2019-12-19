@@ -8,7 +8,7 @@
 #endif
 #include "epdglue.h"
 #include "tbprobe.h"
-/* last modified 11/02/19 */
+/* last modified 11/10/19 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -626,35 +626,39 @@ int Option(TREE * tree) {
     int i;
     float adjust;
 
-    if (nargs < 2) {
-      printf("usage:  elo <800-3600>\n");
-      return 1;
+    if (nargs == 2) {
+      if (OptionMatch("off", args[1])) {
+        elo = 3601;
+        nps_loop = 0;
+        elo_randomize = 0;
+      } else {
+        elo = atoi(args[1]);
+        if (elo < 800)
+          elo = 800;
+        elo = Min(elo, 3601);
+        if (elo >= 3600) {
+          nps_loop = 0;
+          knps_target = 0;
+          elo_randomize = 0;
+        } else {
+          elo_randomize = Min(1800, elo - 800) / 18;
+          for (i = 0; i < 15; i++)
+            if (elo <= elo_set[i]) {
+              nps_loop = elo_burnc[i];
+              adjust = (elo_set[i] - elo) / 200.0;
+              nps_loop -= adjust * (elo_burnc[i] - elo_burnc[i - 1]);
+              knps_target =
+                  elo_knps[i] - (elo_knps[i] - elo_knps[i - 1]) * adjust;
+              break;
+            }
+        } 
+      }
     }
-    elo = atoi(args[1]);
-    if (elo < 800)
-      elo = 800;
     if (elo > 3600)
-      elo = 3601;
-    Print(32, "Elo level set to %d\n", elo);
-    if (elo >= 2600)
-      elo_randomize = 0;
+      Print(4095, "Elo skill setting disabled\n");
     else
-      elo_randomize = Min(1800, elo - 800) / 18;
-    if (elo >= 3600) {
-      nps_loop = 0;
-      knps_target = 0;
-    } else {
-      for (i = 0; i < 15; i++)
-        if (elo <= elo_set[i]) {
-          nps_loop = elo_burnc[i];
-          adjust = (elo_set[i] - elo) / 200.0;
-          nps_loop -= adjust * (elo_burnc[i] - elo_burnc[i - 1]);
-          knps_target =
-              elo_knps[i] - (elo_knps[i] - elo_knps[i - 1]) * adjust;
-          break;
-        }
-    }
-#  if !defined(xDEBUG)
+      Print(4095, "Elo set to %d\n", elo);
+#  if defined(DEBUG)
     printf("elo_randomize=%d\n", elo_randomize);
     printf("knps_target=%d\n", knps_target);
     printf("nps_loop = %d\n", nps_loop);
