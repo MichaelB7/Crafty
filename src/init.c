@@ -47,10 +47,10 @@ void Initialize() {
   if (!book_file) {
     book_file = fopen(log_filename, "rb");
     if (!book_file) {
-      Print(2048, "unable to open book file [%s/book.bin].\n", book_path);
+      Print(4095, "unable to open book file [%s/book.bin].\n", book_path);
       Print(32, "book is disabled\n");
     } else {
-      Print(2048, "unable to open book file [%s/book.bin] for \"write\".\n",
+      Print(4095, "unable to open book file [%s/book.bin] for \"write\".\n",
           book_path);
       Print(32, "learning is disabled\n");
     }

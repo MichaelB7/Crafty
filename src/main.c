@@ -9,7 +9,7 @@
 #if defined(SYZYGY)
 #  include "tbprobe.h"
 #endif
-/* last modified 11/02/19 */
+/* last modified 11/29/19 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -4284,6 +4284,30 @@
  *           only) to produce opponents down in that range.  This will likely  *
  *           be updated over time.                                             *
  *                                                                             *
+ *    25.5   Three bug fixes.  First had to do with the logic to ignore some   *
+ *           fail lows at the root.  If a move fails high, then fails low, I   *
+ *           wanted to restore the previous PV and ignore that fail high /     *
+ *           fail low condition.  Unfortunately it could look at scores from   *
+ *           the PREVIOUS iteration and replace the fail low move with that    *
+ *           move, which was not what was intended.  Now it only replaces the  *
+ *           fail/high low with a move with a better score saved from the      *
+ *           CURRENT iteration.  Another bug with reductions where a reduced   *
+ *           search could fail high.  I then wanted to re-search the move      *
+ *           with the original depth to see if it still fails high.  However,  *
+ *           this search was done with depth - 1, NOT depth + extend -1, which *
+ *           could lead to minor search inconsistencies.  It was fixed to use  *
+ *           the correct original unreduced depth.  The final bug was in the   *
+ *           SMP code.  A bug where if we fail low on the very first move, the *
+ *           DTS code would still emit a split point for ply=1 thinking the    *
+ *           first move had been searched and YBW had been satisfied.  In this *
+ *           case it was wrong.  It was terminating the search and returning   *
+ *           to Iterate() to display (if requested) the fail low and then      *
+ *           adjust alpha downward.  But by emitting the split point, other    *
+ *           threads could start searching other moves at ply=1, which could   *
+ *           cause an unexpected race condition.  The fix was to only emit a   *
+ *           split point at ply=1 if the first move searched returned a score  *
+ *           within the alpha/beta window.                                     *
+ *                                                                             *
  *******************************************************************************
  */
 int main(int argc, char **argv) {
@@ -4689,11 +4713,15 @@ int main(int argc, char **argv) {
           && Captured(ponder_move) == Captured(move)
           && Promote(ponder_move) == Promote(move)) {
         presult = 1;
-        if (!book_move)
-          predicted++;
       } else
         presult = 0;
     }
+    if (From(ponder_move) == From(move) && To(ponder_move) == To(move)
+        && Piece(ponder_move) == Piece(move)
+        && Captured(ponder_move) == Captured(move)
+        && Promote(ponder_move) == Promote(move) && !book_move &&
+        presult != 1)
+      predicted++;
     ponder_move = 0;
     thinking = 1;
     if (presult != 1) {

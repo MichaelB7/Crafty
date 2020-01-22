@@ -346,7 +346,7 @@ int Search(TREE * tree, int ply, int depth, int wtm, int alpha, int beta,
   return value;
 }
 
-/* last modified 08/03/16 */
+/* last modified 01/02/20 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -720,6 +720,7 @@ int SearchMoveList(TREE * tree, int ply, int depth, int wtm, int alpha,
        //
         if (best != 0) {
           ROOT_MOVE t;
+
           t = root_moves[best];
           for (i = best; i > 0; i--)
             root_moves[i] = root_moves[i - 1];
@@ -730,7 +731,8 @@ int SearchMoveList(TREE * tree, int ply, int depth, int wtm, int alpha,
        // move to the front of the list and update alpha bound.
        //
         for (i = 0; i < n_root_moves; i++) {
-          if (value <= root_moves[i].path.pathv) {
+          if (value <= root_moves[i].path.pathv &&
+              root_moves[i].path.pathd == iteration) {
             ROOT_MOVE t;
             value = root_moves[i].path.pathv;
             alpha = value;
@@ -830,7 +832,8 @@ int SearchMoveList(TREE * tree, int ply, int depth, int wtm, int alpha,
  ************************************************************
  */
 #if (CPUS > 1)
-    if (smode == serial && moves_done && smp_threads &&
+    if (smode == serial && moves_done && smp_threads && (ply != 1 ||
+            search_result == IN_WINDOW) &&
         ThreadSplit(tree, ply, depth, alpha, original_alpha, moves_done))
       do {
         tree->alpha = alpha;
@@ -919,7 +922,7 @@ int SearchMoveList(TREE * tree, int ply, int depth, int wtm, int alpha,
   }
 }
 
-/* last modified 08/03/16 */
+/* last modified 12/27/19 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -957,8 +960,8 @@ int SearchMove(TREE * tree, int ply, int depth, int wtm, int alpha,
         -t_beta, -alpha, check, DO_NULL);
     if (value > alpha && reduce) {
       value =
-          -Search(tree, ply + 1, depth - 1, Flip(wtm), -t_beta, -alpha, check,
-          DO_NULL);
+          -Search(tree, ply + 1, depth + extend - 1, Flip(wtm), -t_beta,
+          -alpha, check, DO_NULL);
     }
   } else
     value = -Quiesce(tree, ply + 1, Flip(wtm), -t_beta, -alpha, 1);

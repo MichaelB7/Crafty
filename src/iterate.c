@@ -544,7 +544,7 @@ int Iterate(int wtm, int search_type, int root_list_done) {
  */
 #if defined(ELO)
         if (elo > 3600 || (knps_target * 1000 > 2 * nodes_per_second &&
-            nps_loop <= 4 && ++adjusted > 100))
+                nps_loop <= 4 && ++adjusted > 100))
           nps_loop = 0;
         else if (nodes_per_second != 1000000) {
           float error;

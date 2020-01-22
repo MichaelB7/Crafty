@@ -651,7 +651,7 @@ int Option(TREE * tree) {
                   elo_knps[i] - (elo_knps[i] - elo_knps[i - 1]) * adjust;
               break;
             }
-        } 
+        }
       }
     }
     if (elo > 3600)
