@@ -35,15 +35,17 @@
 #   -DNODES        This enables the sn=x command.  Crafty will search until
 #                  exactly X nodes have been searched, then the search 
 #                  terminates as if time ran out.
+#   -DELO          Enables the "skill" command which allows you to arbitrarily
+#                  lower Crafty's playing skill so it does not seem so
 #   -DNO_INTRIN    use this if your processor does not have builtin intrinsic
-#                  instructions for bit operations (PopCnt and such)
+#                  instructions for bit operations (PopCnt and such).  This 
+#                  will cost some speed by not using the hardware instructions
+#                  for these operations that are much faster.
 #   -DPOSITIONS    Causes Crafty to emit FEN strings, one per book line, as
 #                  it creates a book.  I use this to create positions to use
 #                  for cluster testing.
 #   -DRCDIR        Path to the directory where we look for the .craftyrc or
 #                  crafty.rc (windows) file.
-#   -DSKILL        Enables the "skill" command which allows you to arbitrarily
-#                  lower Crafty's playing skill so it does not seem so
 #                  invincible to non-GM-level players.
 #   -DSYZYGY       This enables syzygy endgame tables (both WDL and DTC)
 #   -DTBDIR        Path to the directory where the endgame tablebase files
@@ -78,15 +80,15 @@ help:
 quick:
 	$(MAKE) target=UNIX \
 		CC=clang \
- 		opt='-DSYZYGY -DTEST -DTRACE -DCPUS=12' \
-		CFLAGS='-mpopcnt -Wall -Wno-array-bounds -pipe -O3' \
+ 		opt='-DSYZYGY -DTRACE -DCPUS=12' \
+		CFLAGS='-Wall -mpopcnt -Wno-array-bounds -pipe -O3' \
 		LDFLAGS='$(LDFLAGS) -lstdc++' \
 		crafty-make
 
 unix-gcc:
 	$(MAKE) -j target=UNIX \
 		CC=gcc \
-		opt='-DSYZYGY -DTEST -DCPUS=12 -DELO' \
+		opt='-DSYZYGY -DCPUS=12' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-use \
 		-mpopcnt -fprofile-correction -pthread' \
 		LDFLAGS='$(LDFLAGS) -fprofile-use -pthread -lstdc++' \
@@ -95,7 +97,7 @@ unix-gcc:
 unix-gcc-profile:
 	$(MAKE) -j target=UNIX \
 		CC=gcc \
-		opt='-DSYZYGY -DTEST -DCPUS=12 -DELO' \
+		opt='-DSYZYGY -DCPUS=12' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-arcs \
 		-mpopcnt -pthread' \
 		LDFLAGS='$(LDFLAGS) -fprofile-arcs -pthread -lstdc++ ' \
@@ -105,7 +107,7 @@ unix-clang:
 	@/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-profdata merge -output=crafty.profdata *.profraw
 	$(MAKE) -j target=UNIX \
 		CC=clang \
-		opt='-DSYZYGY -DTEST -DCPUS=12' \
+		opt='-DELO -DSYZYGY -DCPUS=12' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 \
 			-mpopcnt -fprofile-instr-use=crafty.profdata' \
 		LDFLAGS='$(LDFLAGS) -fprofile-use -lstdc++' \
@@ -114,7 +116,7 @@ unix-clang:
 unix-clang-profile:
 	$(MAKE) -j target=UNIX \
 		CC=clang \
-		opt='-DSYZYGY -DTEST -DCPUS=12' \
+		opt='-DELO -DSYZYGY -DCPUS=12' \
 		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 \
 			-mpopcnt -fprofile-instr-generate' \
 		LDFLAGS='$(LDFLAGS) -fprofile-instr-generate -lstdc++ ' \
@@ -123,7 +125,7 @@ unix-clang-profile:
 unix-icc:
 	$(MAKE) -j target=UNIX \
 		CC=icc \
-		opt='-DSYZYGY -DTEST -DCPUS=12' \
+		opt='-DSYZYGY -DCPUS=4' \
 		CFLAGS='-Wall -w -O2 -prof_use -prof_dir ./prof -fno-alias \
                         -mpopcnt -pthread' \
 		LDFLAGS='$(LDFLAGS) -pthread -lstdc++' \
@@ -132,7 +134,7 @@ unix-icc:
 unix-icc-profile:
 	$(MAKE) -j target=UNIX \
 		CC=icc \
-		opt='-DSYZYGY -DTEST -DCPUS=12' \
+		opt='-DSYZYGY -DCPUS=12' \
 		CFLAGS='-Wall -w -O2 -prof_gen -prof_dir ./prof -fno-alias \
                         -mpopcnt -pthread' \
 		LDFLAGS='$(LDFLAGS) -pthread -lstdc++ ' \

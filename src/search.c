@@ -139,7 +139,7 @@ int Search(TREE * tree, int ply, int depth, int wtm, int alpha, int beta,
  *  EGTBs.  Now it's time to try a probe into the endgame   *
  *  tablebase files.  This is done if we notice that there  *
  *  are N or fewer pieces left on the board AND the 50 move *
- *  counter is zero which enables probing the WDL EGTBs     *
+ *  counter is zero which enables probing the W/D/L EGTBs   *
  *  correctly.  Probing after a capture won't work as it is *
  *  possible that there is a necessary pawn push here and   *
  *  there to reset the 50 move counter, otherwise we could  *

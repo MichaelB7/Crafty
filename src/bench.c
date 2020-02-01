@@ -143,6 +143,7 @@ int Bench(int increase, int autotune) {
       Print(4095, "\n");
     fflush(stdout);
   }
+  Print(4095, "\n");
  /*
   ************************************************************
   *                                                          *
@@ -190,6 +191,7 @@ int Bench(int increase, int autotune) {
           Max((uint64_t) program_end_time - program_start_time, 1);
       Print(4095, "%2d(%s) ", pos + 1, DisplayKMB(nodes_per_second, 0));
     }
+    Print(4095, "\n");
   }
  /*
   ************************************************************

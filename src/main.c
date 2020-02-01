@@ -4308,6 +4308,13 @@
  *           split point at ply=1 if the first move searched returned a score  *
  *           within the alpha/beta window.                                     *
  *                                                                             *
+ *    25.6   Minor bug in Resign() fixed.  This code will resign or offer      *
+ *           draws when appropriate.  The problem was the new SYZYGY endgame   *
+ *           tables subtly altered the scores and this code did not understand *
+ *           precisely what the scores meant, so it would offer draws when     *
+ *           winning.  Also another minor bug that would not offer a draw when *
+ *           in an EGTB drawn position with swindle mode off.                  *
+ *                                                                             *
  *******************************************************************************
  */
 int main(int argc, char **argv) {

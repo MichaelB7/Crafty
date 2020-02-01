@@ -245,8 +245,6 @@ void SetBoard(TREE * tree, int nargs, char *args[], int special) {
   game_wtm = twtm;
   error += InvalidPosition(tree);
   if (!error) {
-    if (log_file)
-      DisplayChessBoard(log_file, tree->position);
     rep_index = 0;
     tree->rep_list[0] = HashKey;
     Reversible(0) = 0;

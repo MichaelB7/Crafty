@@ -442,7 +442,7 @@ const int OOOsqs[2][3] = {{E8, D8, C8}, {E1, D1, C1}};
 const int OOfrom[2] = {E8, E1};
 const int OOto[2] =   {G8, G1};
 const int OOOto[2] =  {C8, C1};
-#define VERSION      "25.5"
+#define VERSION      "25.6"
 char version[8] = {VERSION};
 PLAYING_MODE mode = normal_mode;
 int batch_mode = 0;                  /* no asynch reads */
@@ -581,7 +581,7 @@ int32_t smp_split_group = 8;       /* max threads per group              */
 int32_t smp_split_at_root = 1;     /* enable split at root               */
 int32_t smp_min_split_depth = 5;   /* don't split within 5 plies of tips */
 int32_t smp_gratuitous_depth = 10; /* gratuitous splits if depth > 10    */
-int32_t smp_gratuitous_limit = 6;  /* max gratuitous splits / thread     */
+int32_t smp_gratuitous_limit = 7;  /* max gratuitous splits / thread     */
 int smp_nice = 1;                       /* terminate idle threads             */
 int smp_affinity = 0;                   /* anything >= 0 is enabled           */
 int smp_affinity_increment = 1;         /* if physical cores are zero - N-1 
@@ -602,10 +602,10 @@ int smp_numa = 0;                       /* disables NUMA mode by default      */
 */
 int autotune_params = 4;
 struct autotune tune[16] = {
-  { 4, 20, 4, "max thread group", "smpgroup", &smp_split_group},
-  { 4,  8, 1, "min split depth", "smpmin", &smp_min_split_depth},
-  {10, 16, 2, "min gratuitous split depth", "smpgsd", &smp_gratuitous_depth},
-  { 1,  8, 2, "gratuitous split limit", "smpgsl", &smp_gratuitous_limit},
+  { 4, CPUS, 4, "max thread group", "smpgroup", &smp_split_group},
+  { 4,    8, 1, "min split depth", "smpmin", &smp_min_split_depth},
+  {10,   16, 2, "min gratuitous split depth", "smpgsd", &smp_gratuitous_depth},
+  { 1,    8, 2, "gratuitous split limit", "smpgsl", &smp_gratuitous_limit},
 };
 uint32_t parallel_splits;
 uint32_t parallel_splits_wasted;

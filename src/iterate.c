@@ -46,7 +46,7 @@ int Iterate(int wtm, int search_type, int root_list_done) {
   TREE *const tree = block[0];
   ROOT_MOVE temp_rm;
   int i, alpha, beta, current_rm = 0, force_print = 0;
-  int value = 0, twtm, correct, correct_count, npc, cpl, max;
+  int value = 0, twtm, correct, correct_count, npc, cpl, max, egtb = 0;
   static int adjusted = 0;
   uint32_t idle_time;
   char buff[32];
@@ -131,7 +131,7 @@ int Iterate(int wtm, int search_type, int root_list_done) {
  */
   if (!root_list_done)
     RootMoveList(wtm);
-  if (booking || (!Book(tree, wtm) && !RootMoveEGTB(wtm)))
+  if (booking || (!Book(tree, wtm) && !(egtb=RootMoveEGTB(wtm))))
     do {
       if (abort_search)
         break;
@@ -706,7 +706,8 @@ int Iterate(int wtm, int search_type, int root_list_done) {
   else {
     last_root_value = tree->pv[0].pathv;
     value = tree->pv[0].pathv;
-    book_move = 1;
+    if (!egtb)
+      book_move = 1;
     if (analyze_mode)
       Kibitz(4, wtm, 0, 0, 0, 0, 0, 0, kibitz_text);
   }

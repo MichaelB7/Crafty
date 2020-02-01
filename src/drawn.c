@@ -1,6 +1,6 @@
 #include "chess.h"
 #include "data.h"
-/* last modified 12/21/09 */
+/* last modified 01/30/20 */
 /*
  *******************************************************************************
  *                                                                             *
@@ -42,7 +42,7 @@ int Drawn(TREE * tree, int value) {
  *                                                          *
  ************************************************************
  */
-  if (MateScore(value))
+  if (MateScore(value) || EGTBScore(value))
     return 0;
 /*
  ************************************************************
