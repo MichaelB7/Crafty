@@ -81,7 +81,7 @@ quick:
 	$(MAKE) target=UNIX \
 		CC=clang \
  		opt='-DSYZYGY -DTRACE -DCPUS=12' \
-		CFLAGS='-Wall -mpopcnt -Wno-array-bounds -pipe -O3' \
+		CFLAGS+='-Wall -Wno-array-bounds -pipe -O3' \
 		LDFLAGS='$(LDFLAGS) -lstdc++' \
 		crafty-make
 
@@ -89,8 +89,8 @@ unix-gcc:
 	$(MAKE) -j target=UNIX \
 		CC=gcc \
 		opt='-DSYZYGY -DCPUS=12' \
-		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-use \
-		-mpopcnt -fprofile-correction -pthread' \
+		CFLAGS+='-Wall -Wno-array-bounds -pipe -O3 -fprofile-use \
+		-fprofile-correction -pthread' \
 		LDFLAGS='$(LDFLAGS) -fprofile-use -pthread -lstdc++' \
 		crafty-make
 
@@ -98,8 +98,8 @@ unix-gcc-profile:
 	$(MAKE) -j target=UNIX \
 		CC=gcc \
 		opt='-DSYZYGY -DCPUS=12' \
-		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 -fprofile-arcs \
-		-mpopcnt -pthread' \
+		CFLAGS+='-Wall -Wno-array-bounds -pipe -O3 -fprofile-arcs \
+			-pthread' \
 		LDFLAGS='$(LDFLAGS) -fprofile-arcs -pthread -lstdc++ ' \
 		crafty-make
 
@@ -108,8 +108,8 @@ unix-clang:
 	$(MAKE) -j target=UNIX \
 		CC=clang \
 		opt='-DELO -DSYZYGY -DCPUS=12' \
-		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 \
-			-mpopcnt -fprofile-instr-use=crafty.profdata' \
+		CFLAGS+='-Wall -Wno-array-bounds -pipe -O3 \
+			-fprofile-instr-use=crafty.profdata' \
 		LDFLAGS='$(LDFLAGS) -fprofile-use -lstdc++' \
 		crafty-make
 
@@ -117,8 +117,8 @@ unix-clang-profile:
 	$(MAKE) -j target=UNIX \
 		CC=clang \
 		opt='-DELO -DSYZYGY -DCPUS=12' \
-		CFLAGS='-Wall -Wno-array-bounds -pipe -O3 \
-			-mpopcnt -fprofile-instr-generate' \
+		CFLAGS+='-Wall -Wno-array-bounds -pipe -O3 \
+			-fprofile-instr-generate' \
 		LDFLAGS='$(LDFLAGS) -fprofile-instr-generate -lstdc++ ' \
 		crafty-make
 
@@ -126,8 +126,8 @@ unix-icc:
 	$(MAKE) -j target=UNIX \
 		CC=icc \
 		opt='-DSYZYGY -DCPUS=4' \
-		CFLAGS='-Wall -w -O2 -prof_use -prof_dir ./prof -fno-alias \
-                        -mpopcnt -pthread' \
+		CFLAGS+='-Wall -w -O2 -prof_use -prof_dir ./prof -fno-alias \
+                        -pthread' \
 		LDFLAGS='$(LDFLAGS) -pthread -lstdc++' \
 		crafty-make
 
@@ -135,8 +135,8 @@ unix-icc-profile:
 	$(MAKE) -j target=UNIX \
 		CC=icc \
 		opt='-DSYZYGY -DCPUS=12' \
-		CFLAGS='-Wall -w -O2 -prof_gen -prof_dir ./prof -fno-alias \
-                        -mpopcnt -pthread' \
+		CFLAGS+='-Wall -w -O2 -prof_gen -prof_dir ./prof -fno-alias \
+                        -pthread' \
 		LDFLAGS='$(LDFLAGS) -pthread -lstdc++ ' \
 		crafty-make
 

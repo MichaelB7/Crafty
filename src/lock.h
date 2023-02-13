@@ -41,40 +41,11 @@ void Pause() {
  *                                                                             *
  *******************************************************************************
  */
-static void __inline__ LockX86(volatile int *lock) {
-  int dummy;
-  asm __volatile__(
-      "1:          movl    $1, %0"          "\n\t"
-      "            xchgl   (%1), %0"        "\n\t"
-      "            testl   %0, %0"          "\n\t"
-      "            jz      3f"              "\n\t"
-      "2:          pause"                   "\n\t"
-      "            movl    (%1), %0"        "\n\t"
-      "            testl   %0, %0"          "\n\t"
-      "            jnz     2b"              "\n\t"
-      "            jmp     1b"              "\n\t"
-      "3:"                                  "\n\t"
-      :"=&q"(dummy)
-      :"q"(lock)
-      :"cc", "memory");
-}
-static void __inline__ Pause() {
-  asm __volatile__(
-      "            pause"                   "\n\t");
-}
-static void __inline__ UnlockX86(volatile int *lock) {
-  asm __volatile__(
-      "movl        $0, (%0)"
-      :
-      :"q"(lock)
-      :"memory");
-}
-
-#    define LockInit(p)           (p=0)
-#    define LockFree(p)           (p=0)
-#    define Unlock(p)             (UnlockX86(&p))
-#    define Lock(p)               (LockX86(&p))
-#    define lock_t                volatile int
+#    include <pthread.h>
+#    define lock_t                pthread_mutex_t
+#    define LockInit(p)           (pthread_mutex_init(&p, NULL))
+#    define Unlock(p)             (pthread_mutex_unlock(&p))
+#    define Lock(p)               (pthread_mutex_lock(&p))
 #  endif
 #else
 #  define LockInit(p)
